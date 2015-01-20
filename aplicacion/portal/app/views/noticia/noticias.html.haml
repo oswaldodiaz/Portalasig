@@ -1,0 +1,46 @@
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %h3
+      Noticia
+
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "noticia", action: "index"}, {:class => "btn"}  
+
+#inicio_noticias{:style => "border-style: outset;border-color: #3388CC; width: 595px;"}
+  .row-fluid{:style => "text-align: justify;margin: 10px 0px 5px 20px;width: 570px;"}
+    %h4
+      =@noticia.titulo
+      -if @es_del_grupo_docente
+        =link_to '<i class="icon-trash"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "noticia", :action => "eliminar_noticia", :id => @noticia.id}, :id => "eliminar_noticia", :title => "Eliminar Noticia", :style => "padding-left:20px", :onclick => "if(!confirm('¿Está seguro que quiere eliminar esta noticia?')) return false;"
+
+    =@noticia.noticia
+  .row-fluid{:style => "margin: 10px 0px 0px 20px;width: 570px;"}
+
+    .span{:style => "float: right;text-align: right;width: 440px; padding-right: 5px;"}
+      %h5
+        =@noticia.usuario.nombre_y_apellido
+        \-
+        =@noticia.created_at.strftime("%d/%m/%Y %H:%M %P")
+
+  .row-fluid{:style => "margin: 0px 0px 0px 20px;width: 570px;"}
+    .span{:style => "float: right;text-align: right;width: 440px; padding-right: 5px;"}
+
+      -fullpath = root_url+@sitio_web.nombre_url+"/"+@sitio_web.periodo+"/noticia/noticias/"+@noticia.id.to_s
+
+      %a{:href=>"#", :target=>"_blank", :onclick => "window.open('http://www.facebook.com/sharer/sharer.php?s=100&p[url]="+fullpath+"&p[images][0]=&p[title]=#{@noticia.titulo}&p[summary]=#{@noticia.noticia_corta}&redirect_uri="+root_url+"','sharer','toolbar=0,status=0,width=626,height=436');return false;"}
+        =image_tag("facebook.png", alt: "Compartir en Facebook", :style =>"height: 20px;")
+      %a{:href=>"#", :target=>"_blank", :onclick => "window.open('https://twitter.com/share?text=Les%20Comparto%20esta%20noticia%20&url="+fullpath+"','sharer','toolbar=0,status=0,width=626,height=236');return false;"}
+        =image_tag("twitter.png", alt: "Compartir en Twitter", :style =>"height: 20px;")
+      :javascript
+        !function(d,s,id){
+          var js,
+            fjs=d.getElementsByTagName(s)[0];
+          if(!d.getElementById(id)){
+            js=d.createElement(s);
+            js.id=id;
+            js.src="https://platform.twitter.com/widgets.js";
+            fjs.parentNode.insertBefore(js,fjs);
+          }
+        }(document,"script","twitter-wjs");
+      %a{:href=>"https://plus.google.com/share?url=#{fullpath}", :onclick=>"javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"}
+        =image_tag "https://www.gstatic.com/images/icons/gplus-64.png", :alt=>"Compartir en Google+", :style =>"height: 20px;"

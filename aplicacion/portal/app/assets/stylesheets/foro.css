@@ -1,0 +1,23 @@
+.foro{
+  width:590px;
+  margin:0px auto;
+  padding:0px;
+}
+
+.foro h4{
+  text-decoration:underline;
+}
+
+.foro h4:hover{
+  text-decoration:none;
+}
+
+div#container textarea {
+  min-width: 270px;
+  width: 270px;
+  height: 22px;
+  line-height: 24px;
+  min-height: 22px;
+  overflow-y: hidden; /* fixes scrollbar flash - kudos to @brettjonesdev */
+  padding-top: 1.1em; /* fixes text jump on Enter keypress */
+}

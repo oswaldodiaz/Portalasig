@@ -1,0 +1,102 @@
+:javascript
+  $(document).ready(function() {
+    var text = $('#foro_contenido').text();
+    $('#foro_contenido').empty().append(text);
+
+    $.each( $('.foro_comentario'), function(){
+      text = $(this).text();
+      $(this).empty().append(text);;
+    });
+  });
+
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %h3
+      Foros
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "foro", action: "index"}, {:class => "btn"}
+
+
+
+#inicio_foro{:style => "border-style: outset;border-color: #3388CC; width: 595px;"}
+  .row-fluid{:style => "text-align: justify;margin: 10px 0px 5px 20px;width: 570px;"}
+    %h4
+      =@foro.titulo
+      -if @es_del_grupo_docente || (session[:usuario] && @foro.usuario_id == session[:usuario].id)
+        =link_to '<i class="icon-trash"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "foro", :action => "eliminar_foro", :id => @foro.id}, :id => "eliminar_foro", :title => "Eliminar Foro", :style => "padding-left:20px", :onclick => "if(!confirm('¿Está seguro que quiere eliminar este foro?')) return false;"
+  
+    #foro_contenido
+      =@foro.descripcion
+      
+
+  .row-fluid{:style => "margin: 10px 0px 0px 20px;width: 570px;"}
+    .span{:style => "text-align:left;width:100px"}
+    .span{:style => "float: right;text-align: right;width: 440px; padding-right: 5px;"}
+      %h5
+        =@foro.usuario.nombre_y_apellido
+        \-
+        =@foro.created_at.strftime("%d/%m/%Y %H:%M %P")
+
+  .row-fluid{:style => "margin: 0px 0px 0px 20px;width: 570px;"}
+    .span{:style => "float: right;text-align: right;width: 440px; padding-right: 5px;"}
+
+      -fullpath = root_url+@sitio_web.nombre_url+"/"+@sitio_web.periodo+"/foro/foros/"+@foro.id.to_s
+
+      %a{:href=>"#", :target=>"_blank", :onclick => "window.open('http://www.facebook.com/sharer/sharer.php?s=100&p[url]="+fullpath+"&p[images][0]=&p[title]=#{@foro.titulo}&p[summary]=&redirect_uri="+root_url+"','sharer','toolbar=0,status=0,width=626,height=436');return false;"}
+        =image_tag("facebook.png", alt: "Compartir en Facebook", :style =>"height: 20px;")
+      %a{:href=>"#", :target=>"_blank", :onclick => "window.open('https://twitter.com/share?text=Les%20Comparto%20este%20foro%20&url="+fullpath+"','sharer','toolbar=0,status=0,width=626,height=236');return false;"}
+        =image_tag("twitter.png", alt: "Compartir en Twitter", :style =>"height: 20px;")
+      :javascript
+        !function(d,s,id){
+          var js,
+            fjs=d.getElementsByTagName(s)[0];
+          if(!d.getElementById(id)){
+            js=d.createElement(s);
+            js.id=id;
+            js.src="https://platform.twitter.com/widgets.js";
+            fjs.parentNode.insertBefore(js,fjs);
+          }
+        }(document,"script","twitter-wjs");
+      %a{:href=>"https://plus.google.com/share?url="+fullpath, :onclick=>"javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"}
+        =image_tag "https://www.gstatic.com/images/icons/gplus-64.png", :alt=>"Compartir en Google+", :style =>"height: 20px;"
+
+
+#comentarios{:style => "width: 600px;margin-top: 15px;background-color:#E0E6F8"}
+  -@foro.comentario.each do |comentario|
+    #comentario{:style => "padding:5px;border-bottom-style: solid;border-bottom-color: #FFFFFF;border-bottom-width: 1px;"}
+      #autor_titulo
+        %strong
+          =comentario.usuario.nombre_y_apellido
+        -if @es_del_grupo_docente || (session[:usuario] && comentario.usuario_id == session[:usuario].id)
+          =link_to '<i class="icon-trash"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "foro", :action => "eliminar_comentario", :id => comentario.id}, :id => "eliminar_comentario", :title => "Eliminar Comentario", :style => "text-align:left;", :onclick => "if(!confirm('¿Está seguro de que quiere eliminar el comentario?')) return false;"
+
+        .foro_comentario{:style => "width:100%"}
+          =comentario.comentario
+      #fecha{:style => "padding:5px;"}
+        .row-fluid{:style => "margin: 5px 0px 0px 0px;width: 580px;"}
+          .span{:style => "text-align:left;width:120px"}
+          .span{:style => "float:right;text-align: right;width:400px"}
+            %h5
+              =comentario.created_at.strftime("%d/%m/%Y %H:%M %P")
+
+  -if @pertenece_al_sitio_web
+    =link_to "", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "foro", action: "foros", :id => @foro.id}, {:style => "display:none", :id => "url"}
+    
+    =form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "foro", :action => "agregar_comentario"}, {:class => "form-horizontal", :style => "background-color:#FFFFFF", :id => "formulario_comentario"})do  
+      = hidden_field :foro, :id
+
+      #comentarios_nuevos{:style => "width: 600px;margin-bottom: 15px;background-color:#E0E6F8"}
+        #comentario{:style => "padding:5px;border-bottom-style: solid;border-bottom-color: #FFFFFF;border-bottom-width: 1px;"}
+
+          .row-fluid{:style => "padding-bottom:10px;"}
+            .span
+              = text_area :comentario, :comentario, {:class => "comentario_nuevo_en_foro", :style => "resize: none; width:580px;height:45px;overflow: hidden;", :placeholder => "Escriba un comentario..."}
+              .hidendiv{:style=>"display: none;white-space: pre-wrap;width: 540px;min-height: 50px;word-wrap: break-word;"}
+          .row-fluid
+            .span
+              %span{:id => 'ajax-loader', :style => "display:none"}
+                =image_tag "ajax-loader-fondo-azul.gif"
+              = submit_tag "Publicar", :class=>"btn btn-primary", :id => "publicar_comentario_submit", :style => "float:right;text-align:right;"
+
+
+

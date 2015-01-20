@@ -1,0 +1,117 @@
+%h3{:style => "padding-bottom:10px"}
+	Información General
+	-if @es_del_grupo_docente
+		=link_to '<i class="icon-pencil"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "informacion_general", :action => "editar"}, :id => "editar_inf_gral_submit", :title => "Editar Información General", :style => "padding-left:20px"
+
+
+%table{:class => "tabla-vista-datos"}
+	%tr
+		%td
+			%Strong Código:
+		%td
+			=@sitio_web.asignatura.codigo
+	%tr
+		%td
+			%Strong Nombre:
+		%td
+			=@sitio_web.asignatura.nombre
+	%tr
+		%td
+			%Strong Créditos:
+		%td
+			=@sitio_web.asignatura.unidades_credito	
+	%tr
+		%td
+			%Strong Tipo:
+		%td
+			= @sitio_web.asignatura.tipo
+	-if @sitio_web.asignatura.tipo == "Obligatoria" || @sitio_web.asignatura.tipo == "Electiva" || @sitio_web.asignatura.tipo == "Obligatoria optativa"
+		%tr
+			-if @sitio_web.asignatura.tipo == "Obligatoria"
+				%td
+					%Strong Semestre:
+				%td
+					=@sitio_web.asignatura.asignatura_clasificacion.clasificacion.nombre
+
+			-else
+				%td
+					-if @sitio_web.asignatura.numero_menciones > 1
+						%Strong Menciones:
+					-else
+						%Strong Mención:
+				%td
+					=@sitio_web.asignatura.menciones_arregladas	
+		
+	-if @sitio_web.asignatura.requisitos
+		%tr
+			%td
+				%Strong Requisitos:
+			%td
+				= @sitio_web.asignatura.requisitos
+					
+%br
+%br
+
+-if @sitio_web.objetivo.size > 0 || @es_del_grupo_docente
+	%h3
+		Objetivos
+		-if @es_del_grupo_docente
+			-if @sitio_web.objetivo.size > 0
+				=link_to '<i class="icon-pencil"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "objetivo", :action => "editar"}, :id => "agregar_objetivo_submit", :title => "Editar Objetivos", :style => "padding-left:20px"
+			-else
+				=link_to '<i class="icon-plus"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "objetivo", :action => "editar"}, :id => "agregar_objetivo_submit", :title => "Agregar Objetivos", :style => "padding-left:20px"
+
+-if @sitio_web.objetivo.size > 0
+	%br
+	-@sitio_web.objetivo.each_with_index do |objetivo, i|
+		.parrafo_que_se_puede_eliminar
+			%p{:style => "width: 550px;"}
+				%strong
+					= succeed '.' do
+						=(i+1).to_s
+				= succeed '.' do
+					=objetivo.descripcion
+				-if @es_del_grupo_docente
+					=link_to '<i class="icon-trash"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "objetivo", :action => "eliminar", :id => objetivo.id}, :id => "eliminar_objetivo", :title => "Eliminar Objetivo", :style => "padding-left:20px", :onclick => "if(!confirm('¿Está seguro que quiere eliminar este objetivo?')) return false;"
+
+
+-elsif @es_del_grupo_docente
+	%p
+		No existe ningún objetivo para este sitio web.
+
+%br
+%br
+
+-if @sitio_web.bibliography.size > 0 || @es_del_grupo_docente
+	%h3
+		Bibliografía
+		-if @es_del_grupo_docente
+			-if @sitio_web.bibliography.size > 0
+				=link_to '<i class="icon-pencil"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "bibliografia", :action => "editar"}, :id => "agregar_bibliografia_submit", :title => "Editar Bibliografía", :style => "padding-left:20px"
+			-else
+				=link_to '<i class="icon-plus"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "bibliografia", :action => "editar"}, :id => "agregar_bibliografia_submit", :title => "Agregar Bibliografía", :style => "padding-left:20px"
+
+
+-if @sitio_web.bibliography.size > 0
+	%br
+	-@sitio_web.bibliography.order("autores").each_with_index do |bibliography|
+		%p{:style => "width: 550px;"}
+			%em
+				= succeed '.' do
+					=bibliography.autores
+			%strong
+				= surround '"', '"' do
+					=bibliography.titulo
+				-if @es_del_grupo_docente
+					=link_to '<i class="icon-trash"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "bibliografia", :action => "eliminar", :id => bibliography.id}, :id => "eliminar_bibliografia", :title => "Eliminar Bibliografía", :style => "padding-left:20px", :onclick => "if(!confirm('¿Está seguro que quiere eliminar esta bibliografía?')) return false;"
+
+
+		%p{:style => "width: 550px;"}
+			= succeed '.' do
+				=bibliography.descripcion
+		%br
+-elsif @es_del_grupo_docente
+	%p
+		No existe ninguna bibliografía para este sitio web.
+
+

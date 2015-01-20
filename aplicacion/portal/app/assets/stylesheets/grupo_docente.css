@@ -1,0 +1,70 @@
+
+.docente {
+  padding-top: 5px;
+}
+.docente td{
+  padding: 0px 10px 5px 0px;
+}
+
+.docente thead td{
+  font-weight:bold;
+  white-space: nowrap;
+}
+
+.docente_cedula {
+  width:60px;
+}
+
+.docente_nombre{
+  width:125px;
+}
+
+.docente_correo {
+  width:185px;
+}
+
+.docente_seccion {
+  width:55px;
+}
+
+.docente_tipo {
+  width:105px;
+}
+
+
+
+.preparador {
+  padding-top: 5px;
+}
+.preparador td{
+  padding: 0px 10px 5px 0px;
+}
+
+.preparador thead td{
+  font-weight:bold;
+  white-space: nowrap;
+}
+
+.preparador_cedula {
+  width:57px;
+}
+
+.preparador_nombre{
+  width: 155px;
+}
+
+.preparador_nombre_input{
+  width:65px;
+}
+
+.preparador_correo {
+  width:155px;
+}
+
+.preparador_seccion {
+  width:50px;
+}
+
+.preparador_tipo {
+  width:107px;
+}

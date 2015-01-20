@@ -1,0 +1,127 @@
+:javascript
+  $(document).ready(function() {
+    $('#event_fecha_inicio').datepicker({
+      dateformat: 'dd/mm/yy',
+      changeMonth: true,
+      changeYear: true,
+      yearRange: "-1:+1"
+    });
+
+    $('#event_fecha_inicio').datepicker($.datepicker.regional['es']);
+
+    $('#event_fecha_fin').datepicker({
+      dateformat: 'dd/mm/yy',
+      changeMonth: true,
+      changeYear: true,
+      yearRange: "-1:+1"
+    });
+
+    $('#event_fecha_fin').datepicker($.datepicker.regional['es']);
+
+    $('#evento_fecha_fin').datepicker({
+      dateformat: 'dd/mm/yy',
+      changeMonth: true,
+      changeYear: true,
+      yearRange: "-1:+1"
+    });
+
+    $('#evento_fecha_fin').datepicker($.datepicker.regional['es']);
+
+    agregar_calendario();
+  });
+%h3{:style => "padding-bottom:10px"}
+  Planificación
+  
+#calendar
+= hidden_field :sitio_web, :nombre_url, {:value => @sitio_web.nombre_url}
+= hidden_field :sitio_web, :periodo, {:value => @sitio_web.periodo}
+= hidden_field :es_del_grupo, :docente, {:value => @es_del_grupo_docente}
+= hidden_field :sitio_web, :id, {:value => @sitio_web.id}
+
+=link_to "", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "planificacion", action: "index"}, :style => "display:none", :id => "url2"
+
+-if @es_del_grupo_docente
+  
+
+  %a{:href=>"#Modal_evento_nuevo", :role=>"button", "data-toggle"=>"modal", :style => "white-space:nowrap;display:none", :id => "llamador_Modal_evento_nuevo"}
+
+  #Modal_evento_nuevo{:class=>"modal hide fade"}
+    =form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "planificacion", :action => "crear_evento"}, {:style => "padding-bottom:0px;margin-bottom:0px", :id => "formulario_evento_nuevo"})do  
+
+      .modal-header
+        %a{:id => "cerrar_modal_evento_nuevo", :class=>"close", "data-dismiss"=>"modal", "aria-hidden"=>"true"}x
+        %h3 Crear evento
+      .modal-body
+        #error_evento_nuevo{:style => "margin:0px 0px 5px 0px;display:none", :class=> "alert alert-error"}
+          %a{:class=>"close eliminar_mensaje"}x
+          #flash_evento_nuevo
+        %table{:class => "table-modal"}
+          %tbody
+            %tr
+              %td
+                %strong Fecha de inicio:
+              %td
+                #fecha_evento
+                = hidden_field :evento, :fecha_inicio
+            %tr
+              %td{:style => "padding-left:20px;"}
+                %strong Fecha fin (*): 
+              %td
+                = text_field :evento, :fecha_fin, {:placeholder => "dd/mm/aaaa", :class => "input-large"}
+            %tr
+              %td{:style => "padding-left:20px;"}
+                %strong Título (*):
+              %td
+                = text_field :evento, :titulo, {:placeholder => "Título", :class => "input-large"}
+            %tr
+              %td{:style => "padding-left:20px;"}
+                %strong Descripción (*):
+              %td
+                = text_area :evento, :descripcion, {:placeholder => "Descripción", :class => "input-large", :style => "height:60px"}
+            
+
+      .modal-footer
+        %span{:id => 'ajax-loader', :style => "display:none"}
+          =image_tag "ajax-loader-modal.gif"
+        = submit_tag "Crear", {:class=>"btn btn-primary", :id => "crear_evento_nuevo_button"}
+
+  #Modal_evento_existente{:class=>"modal hide fade"}  
+    =form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "planificacion", :action => "editar_evento"}, {:style => "padding-bottom:0px;margin-bottom:0px", :id => "formulario_editar_evento"})do  
+
+
+      .modal-header
+        %a{:id => "cerrar_modal_editar_evento", :class=>"close", "data-dismiss"=>"modal", "aria-hidden"=>"true"}x
+        %h3 Editar evento
+      .modal-body
+        #error_editar_evento{:style => "margin:0px 0px 5px 0px;display:none", :class=> "alert alert-error"}
+          %a{:class=>"close eliminar_mensaje"}x
+          #flash_editar_evento
+        %table{:class => "table-modal"}
+          %tbody
+            = hidden_field :event, :id
+            %tr
+              %td
+                %strong Fecha de inicio (*):
+              %td{:style => "padding-left:20px;"}
+                = text_field :event, :fecha_inicio, {:placeholder => "dd/mm/aaaa", :class => "input-large"}
+            %tr
+              %td
+                %strong Fecha fin (*):
+              %td{:style => "padding-left:20px;"}
+                = text_field :event, :fecha_fin, {:placeholder => "dd/mm/aaaa", :class => "input-large"}
+            %tr
+              %td
+                %strong Título (*):
+              %td{:style => "padding-left:20px;"}
+                = text_field :event, :titulo, {:placeholder => "Título", :class => "input-large"}
+            %tr
+              %td
+                %strong Descripción (*):
+              %td{:style => "padding-left:20px;"}
+                = text_area :event, :descripcion, {:placeholder => "Descripción", :class => "input-large", :style => "height:60px"}
+            
+
+      .modal-footer
+        %span{:id => 'ajax-loader', :style => "display:none"}
+          =image_tag "ajax-loader-modal.gif"
+        = submit_tag "Guardar", {:class=>"btn btn-primary", :id => "editar_evento_button"}

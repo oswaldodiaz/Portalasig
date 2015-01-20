@@ -1,0 +1,124 @@
+:javascript
+  $(document).ready(function() {
+    $( "#tabs" ).tabs();
+  });
+
+
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %h3
+      Entrega
+      -if @es_del_grupo_docente
+        =link_to '<i class="icon-pencil"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "entrega", :action => "editar", :id => @entrega.id}, :id => "editar_entrega_redirect_submit", :title => "Editar entrega", :style => "margin-left:20px"
+
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "entrega", action: "index"}, {:class => "btn"}
+
+
+
+-if @entrega
+
+  %div{:style => "padding-bottom:15px"}
+    %h4
+      =@entrega.nombre
+      -if @es_del_grupo_docente && @entrega.tiene_entregables?
+        =link_to image_tag("adjunto.png", :alt=>"Archivo", :style =>"height: 20px;"), {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "entrega", :action => "descargar_entregables", :id => @entrega.id}, :id => "descargar_entregable", :title => "Descargar Entregables", :style => "padding-left:20px;heigth:8px"
+
+    %strong Fecha de entrega:
+    -if @entrega.finalizo?
+      %strong{:style => "color:#EE0000"}
+        =@entrega.fecha_entrega.strftime("%d/%m/%Y")    
+    -else
+      %strong{:style => "color:#00DD00"}
+        =@entrega.fecha_entrega.strftime("%d/%m/%Y")
+
+
+  -if @es_del_grupo_docente
+    
+    -if @sitio_web.estudiantes.size > 0
+      #tabs
+        %ul
+          -@sitio_web.seccion_sitio_web.each_with_index do |sec_sitio_web, sec_index|
+            %li
+              %a{:href=>"#tabs-#{sec_index}"}
+                =sec_sitio_web.seccion.nombre
+          
+        -@sitio_web.seccion_sitio_web.each_with_index do |seccion_sitio_web, seccion_index|
+          %div{:id => "tabs-#{seccion_index}", :style => "font-size:12px;"}
+            -if seccion_sitio_web.estudiantes.size > 0
+              -entregables = Entregable.order("updated_at DESC").where(:entrega_id => @entrega.id, :estudiante_id => seccion_sitio_web.estudiantes.collect{|x| x.id})
+              -if entregables.size > 0
+
+                -entregables.each_with_index do |entregable, index|
+                  -style = "padding: 10px 0px 10px 0px;"
+                  -if index > 0
+                    -style += "border-top:1px dashed"
+                  .row-fluid{:style => style}
+                    .span{:style => "text-align:center;width:80px"}
+                      %strong
+                        = entregable.updated_at.strftime("%d/%m/%Y")
+
+                    .span{:style => "text-align:center;width:80px"}
+                      %strong
+                        = entregable.estudiante.usuario.cedula
+
+                    .span{:style => "float:left;text-align:left;width:270px"}
+                      =link_to entregable.estudiante.usuario.nombre_y_apellido, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "entrega", :action => "descargar_entregable", :id => entregable.id.to_s}, :id => "descargar_entregable", :title => "Descargar Entregable"
+
+                    .span{:style => "text-align:center;width:50px;color:#999999"}
+                      = entregable.tamano_string
+
+                    .span{:style => "text-align:left;width:30px"}
+                      =link_to '<i class="icon-arrow-down"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "entrega", :action => "descargar_entregable", :id => entregable.id.to_s}, :id => "descargar_entregable", :title => "Descargar Entregable"
+              
+              -else
+                Ningún estudiante de esta sección ha subido un entregable.
+            -else
+              No existen estudiantes para esta sección.
+    -else
+      No existen estudiantes para subir entregas todavía.
+
+    
+  -elsif @es_estudiante_del_sitio_web
+    %p{:style => "padding-bottom:10px;border-top: 1px dashed #444444;"}
+      -if @entregable
+        %p
+          %strong{:style => "color:#000000"}
+            Última actualización:
+
+          =@entregable.updated_at.strftime("%d/%m/%Y")
+        
+        %p{:style => "color:#999999"}  
+          =link_to image_tag(@entregable.imagen, :alt=>"Entregable", :style =>"height: 20px;") + " " +  @entregable.nombre, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "entrega", :action => "descargar_entregable", :id => @entregable.id.to_s}, :id => "descargar_entregable", :title => "Descargar Entregable", :style => "padding: 0px 20px 0px 10px"
+
+          =@entregable.tamano_string
+
+          -unless @entrega.finalizo?
+            =link_to '<i class="icon-trash"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "entrega", :action => "eliminar_entregable", :id => @entregable.id}, :id => "eliminar_entregable", :title => "Eliminar Entregable", :style => "padding-left:20px", :onclick => "if(!confirm('¿Está seguro que quiere eliminar este entregable?')) return false;"
+
+      -else
+        Usted aún no ha subido su entrega.
+
+
+    %p
+      -if @entrega.finalizo?
+        -if @entregable
+          La fecha de entrega ha finalizado ya.
+        -else
+          Lo sentimos, la fecha de entrega ha finalizado ya.
+
+      -else
+
+        =form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "entrega", :action => "subir_entregable"}, {:id => "formulario_subir_entregable", :multipart => true}) do  
+          = hidden_field :entrega, :id, {:value => @entrega.id}
+
+          %p
+            Suba su entrega:
+          
+          %p
+            = file_field_tag :entregable, :style => "width:400px"
+        
+          %p
+            = submit_tag "Subir", :class=>"btn btn-primary", :id => "subir_entregable_submit"
+            %span{:id => 'ajax-loader', :style => "display:none"}
+              =image_tag "ajax-loader.gif"

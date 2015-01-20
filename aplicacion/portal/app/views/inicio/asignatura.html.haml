@@ -1,0 +1,100 @@
+:javascript
+  $(document).ready(function() {
+    $("#asignatura_datos").autocomplete({
+      source: #{@asignatura_datos}
+    });
+  });
+
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "font-size:14px;padding-top:5px;width:470px"}
+    %strong
+      =link_to "Inicio", :action => "index", :controller => "inicio"
+      >
+      =link_to "Asignaturas", :action => "index", :controller => "inicio"
+      >
+      =link_to "#{@asignatura.asignatura_carrera.first.carrera.nombre}", :action => "index", :controller => "inicio", :id => @asignatura.asignatura_carrera.first.carrera.nombre
+      >
+      =link_to "#{@asignatura.nombre}", :action => "asignatura", :controller => "inicio", :id => "#{@asignatura.codigo} - #{@asignatura.nombre}"
+
+  .span{:style => "float:right;width:320px"}
+    -if session[:usuario] && Docente.where(:id => session[:usuario].id).size > 0
+      =link_to '<i class="icon-plus"></i>'.html_safe, {:action => "agregar_asignatura", :controller => "inicio"}, :class => "btn btn-primary", :id => "agregar_asignatura_submit", :title => "Agregar una asignatura", :style => "float: right;margin-left:5px"
+
+    =link_to '<i class="icon-search"></i>'.html_safe, {:action => "asignatura", :controller => "inicio"}, :class => "btn btn-primary", :id => "buscar_asignatura_submit", :title => "Buscar una asignatura", :style => "float: right;margin-left:5px"
+    
+    = text_field :asignaturaa, :datos, {:placeholder => "Código - Nombre", :class => "span8 search-query", :style => "float: right;margin-left:5px,width:120px", :id => "asignatura_datos"}
+
+    #imagen_de_carga{:style => "display:none; float: right;"}
+      =image_tag "ajax-loader.gif"
+
+    
+#opciones_panel_central{:style => "padding-bottom:10px;"}
+  -if @asignatura
+    %table{:class => "tablaAsignatura", :style => "font-size:26px;"}
+      %tr
+        %td{:style => "text-align:left"}
+          %strong 
+            Asignatura
+        
+        %td
+          %strong 
+            Código
+        %td
+          %strong
+            UC
+        %td
+          %strong
+            Último período
+        -if session[:usuario] && Docente.where(:id => session[:usuario].id).size > 0 && @asignatura.se_puede_crear_sitio_web?
+          %td
+            %strong
+              Crear nuevo sitio
+
+      %tbody
+        %tr
+          %td{:style => "text-align:left;"}
+            -if @asignatura.tiene_sitio_web?
+              =link_to "#{@asignatura.nombre}", :controller => "bienvenida", :action => "index", :asignatura_nombre => @asignatura.nombre_url, :semestre => @asignatura.ultimo_sitio_web.periodo
+            -else
+              =@asignatura.nombre
+          %td 
+            =@asignatura.codigo
+          %td
+            =@asignatura.unidades_credito
+          %td
+            -if @asignatura.tiene_sitio_web?
+              =@asignatura.ultimo_sitio_web.periodo
+            -else
+              No tiene
+          -if session[:usuario] && Docente.where(:id => session[:usuario].id).size > 0 && @asignatura.se_puede_crear_sitio_web?
+            %td
+              %a{:href=>"#Crear_nuevo_sitio", "data-toggle"=>"modal", :style => "white-space:nowrap;", :id => "llamador_Modal_nuevo_sitio", :title => "Crear un sitio web para la asignatura #{@asignatura.nombre}", :onclick => "cambiar_id_modal_nuevo_sitio_web('#{@asignatura.id}')"}
+                %i{:class => "icon-file"}
+
+
+
+
+
+
+    -unless @asignatura.tiene_sitio_web?
+      %br
+      %p
+        %strong
+          Esta asignatura no tiene sitio web disponible.
+  
+=link_to "", {:action => "buscar_semestres_disponibles_para_asignatura_por_id", :controller => "ajax"}, :style => "display:none", :id => "buscar_semestres_disponibles_para_asignatura_por_id"
+
+
+#Crear_nuevo_sitio{:class=>"modal hide fade"}
+  =form_tag({:controller => "inicio", :action => "crear_sitio_web"}, {:style => "padding-bottom:0px;margin-bottom:0px"})do  
+    .modal-header
+      %button{:class=>"close", "data-dismiss"=>"modal", "aria-hidden"=>"true"}x
+      %h3 Introduzca el semestre:
+    .modal-body
+      %p{:style => "margin:0px auto; text-align:center;"}
+        = hidden_field :modal, :asignatura_id
+        Semestre:
+        = select(:semestre, :semestre, {:class => "input-small"})
+
+    .modal-footer
+      = submit_tag "Crear", {:class=>"btn btn-primary", :id => "crear_sitio_button"}

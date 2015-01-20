@@ -1,0 +1,92 @@
+:javascript
+  $(document).ready(function() {
+    $("#input_buscar_docente").autocomplete({
+      source: #{@cedulas}
+    });
+
+    $(".docente_seccion").autocomplete({
+      source: #{@secciones}
+    });
+  });
+
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %h3
+      Editar Docentes
+      
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "grupo_docente", action: "index"}, {:class => "btn"}
+
+
+%p
+  Los campos con (*) son obligatorios.
+
+=link_to "", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "grupo_docente", action: "index"}, :style => "display:none", :id => "url"
+
+=form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "grupo_docente", :action => "procesar_editar_docentes"}, {:class => "form-horizontal", :id => "formulario_editar_docente_grupo_docente"}) do
+  = hidden_field :sitio_web, :id, {:value => @sitio_web.id}
+  = hidden_field :docente, :cantidad, {:value => @sitio_web.docente.size, :autocomplete => "off"}
+  
+
+  %p
+    %strong Buscar docente:
+    = text_field :input, :buscar_docente, {:placeholder => "Cédula", :style => "width:100px;margin-left:10px"}
+    %a{:onclick => "agregar_docente_a_grupo_docente_button()", :class => "btn", :title => "Buscar docente"}
+      %i{:class => "icon-search"}
+
+  %br
+  %table{:id => "tabla_docente", :class => "docente"}
+    %thead
+      %tr
+        %td
+          Cédula (*)
+        %td
+          Nombre (*)
+        %td
+          Correo (*)
+        %td
+          Sección (*)
+        %td
+          Tipo
+    %tbody{:id => "tbody_docente"}
+      -if @sitio_web.docentes.size > 0
+        -@sitio_web.docentes.each_with_index do |docente, i|
+              
+          %tr{:id => "tr_docente_"+(i+1).to_s, :class => "fila_docente"}
+            = hidden_field :docente, "cedula_"+(i+1).to_s, {:value => docente.docente.usuario.cedula}
+                         
+            %td
+              .docente_cedula
+                =docente.docente.usuario.cedula
+
+            %td
+              .docente_nombre
+                =docente.docente.usuario.nombre_y_apellido
+
+            %td
+              = text_field :docente, "correo_"+(i+1).to_s, {:value => docente.correo, :placeholder => "docente@ejemplo.com", :class => "docente_correo"}
+
+            %td
+              = text_field :docente, "seccion_"+(i+1).to_s, {:value => docente.seccion_nombre, :placeholder => "A1", :class => "docente_seccion"}
+            %td
+              = select(:docente, "tipo_"+(i+1).to_s, @tipos, {:prompt => "Seleccione", :selected => docente.tipo}, :class => "docente_tipo")
+            %td
+              %a{:href => "#", :id => "eliminar_docente_"+(i+1).to_s, :onclick => "eliminar_docente_grupo_docente_tabla(this.id);return false;", :title => "Eliminar docente"}
+                %i{:class => "icon-trash"}
+
+      -else
+        :javascript
+          $('#tabla_docente').hide();
+
+  
+  %br
+  %p{:style => "margin:0px auto;text-align:center"}
+    = submit_tag "Guardar", :class=>"btn btn-primary", :id => "editar_docentes_grupo_docente_submit"
+    %span{:id => 'ajax-loader', :style => "display:none"}
+      =image_tag "ajax-loader.gif"
+
+%p
+  %ul 
+    %strong Ayuda
+    %li Para agregar varias secciones a un mismo docente es necesario lo agregue varias veces diferenciando la sección en cada una.
+    %li No es posible eliminar al docente creador de este sitio web.

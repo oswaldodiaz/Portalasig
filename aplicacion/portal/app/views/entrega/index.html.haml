@@ -1,0 +1,28 @@
+%h3{:style => "padding-bottom:10px"}
+  Entregas
+  -if @es_del_grupo_docente
+    =link_to '<i class="icon-plus"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "entrega", :action => "agregar"}, :id => "agregar_descarga_submit", :title => "Agregar una entrega", :style => "margin-left:20px"
+
+-if @sitio_web.entrega.size > 0
+  -Entrega.order("fecha_entrega").where(:sitio_web_id => @sitio_web.id).each_with_index do |entrega, index|
+    -style = "padding: 10px 0px 10px 0px;"
+    -if index > 0
+      -style += "border-top:1px dashed"
+    .row-fluid{:style => style}
+      .span{:style => "text-align:center;width:100px"}
+        -if entrega.finalizo?
+          %strong{:style => "color:#DD0000"}
+            =entrega.fecha_entrega.strftime("%d/%m/%Y")    
+        -else
+          %strong{:style => "color:#00DD00"}
+            =entrega.fecha_entrega.strftime("%d/%m/%Y")
+
+      .span{:style => "width:450px"}
+        =link_to entrega.nombre, :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "entrega", :action => "ver_entrega", :id => entrega.id.to_s
+
+      .span{:style => "text-align:left;width:30px"}
+        -if @es_del_grupo_docente
+          =link_to '<i class="icon-trash"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "entrega", :action => "eliminar", :id => entrega.id}, :id => "eliminar_entrega", :title => "Eliminar Entrega", :style => "padding-left:20px", :onclick => "if(!confirm('¿Está seguro que quiere eliminar esta entrega?')) return false;"
+      
+-else
+  No existen entregas para este sitio web todavía.

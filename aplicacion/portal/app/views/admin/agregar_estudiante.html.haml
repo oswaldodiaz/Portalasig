@@ -1,0 +1,100 @@
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %ul{:class=>"nav nav-pills", :style => "margin-bottom:0px"}
+      %li{:class=>"active"}
+        %a{:href=>"#", :id => "li_agregar_lista", :class => "li_agregar"}
+          Agregar lista de estudiantes
+      %li
+        %a{:href=>"#", :id => "li_agregar_uno", :class => "li_agregar"}
+          Agregar un estudiante
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:action => "estudiantes", :controller => "admin"}, {:class => "btn"}
+
+
+
+%div{:id => "div_agregar_lista", :class => "div_agregar"}
+  -if flash[:errores]
+    -texto = ""
+    -if flash[:errores].size > 1
+      -if flash[:errores].size > 5
+        -texto = "Este archivo no corresponde con el formato presentado en la imagen de abajo."
+      -else
+        -texto = "<ul>Se cometieron los siguientes errores:"
+        -flash[:errores].each do |mensaje|
+          -texto += "<li>"
+          -texto += mensaje
+          -texto += "</li>"
+        -texto += "</ul>"
+    -else
+      -texto = flash[:errores][0]
+
+    :javascript
+      $('#mensajes').show();
+      $("#mensajes").attr('class', 'alert alert-error');
+      $('#flash').empty();
+      $('#flash').append("#{texto}");
+      $(document).ready(function() {
+        $('#li_agregar_lista').click();
+      });
+
+  %br
+  =form_tag({:controller => "admin", :action => "procesar_subir_lista_estudiantes"}, {:multipart => true, :style => "margin-bottom:0px", :onsubmit => "$('#submit_tag').attr('disabled','disabled');$('#ajax-loader2').show();"}) do
+    %table
+      %tr
+        %td
+          = file_field_tag :archivo, :accept => 'xls/xlsx/ods', :style => "width:360px"
+      %tr
+        %td
+          = submit_tag "Subir", :class => "btn btn-primary", :id => "submit_tag"
+          %span{:id => 'ajax-loader', :style => "display:none"}
+            =image_tag "ajax-loader.gif"
+
+  %p
+    Suba la lista de estudiantes para agregarlos al portal. Esta lista debe cumplir el formato presentado a continuación:
+  %p
+    =image_tag "formato_lista_estudiantes.png", :alt => "Ejemplo de lista de estudiantes"
+  %p
+    %ul
+      %strong Nota:
+      %li La cédula debe ser númerica.
+      %li Todos los campos son obligatorios.
+
+%div{:id => "div_agregar_uno", :class => "div_agregar", :style => "display:none"}
+  %p
+    Los campos con (*) son obligatorios.
+
+  =link_to "", {:action => "estudiantes", :controller => "admin"}, :style => "display:none", :id => "url"
+
+  =form_tag({:controller => "admin", :action => "procesar_agregar_estudiante"}, {:class => "form-horizontal", :id => "formulario_agregar_estudiante"})do  
+
+    .control-group
+      %label{:class => "control-label"}
+        %strong Cédula (*): 
+      .controls
+        = text_field :usuario, :cedula, {:placeholder => "12345678", :class => "input-large"}
+    .control-group
+      %label{:class => "control-label"}
+        %strong Nombres (*):
+      .controls
+        = text_field :usuario, :nombre, {:placeholder => "Nombre", :class => "input-large"}
+    .control-group
+      %label{:class => "control-label"}
+        %strong Apellidos (*):
+      .controls
+        = text_field :usuario, :apellido, {:placeholder => "Apellido", :class => "input-large"}
+    .control-group
+      %label{:class => "control-label"}
+        %strong Correo (*):
+      .controls
+        = text_field :usuario, :correo, {:placeholder => "ejemplo@ciens.ucv.ve", :class => "input-large"}
+    
+    .control-group
+      .controls
+        = submit_tag "Guardar", :class=>"btn btn-primary", :id => "agregar_estudiante_submit"
+        %span{:id => 'ajax-loader', :style => "display:none"}
+          =image_tag "ajax-loader.gif"
+  %p
+    %ul
+      %strong Nota:
+      %li La cédula debe ser númerica.
+      %li Todos los campos son obligatorios.        

@@ -1,0 +1,119 @@
+:javascript
+	$(document).ready(function() {
+		$("#informacion_general_mencion_otra_1").autocomplete({	source: #{@menciones} });
+	});
+
+.row-fluid{:style => "padding-bottom:10px"}
+	.span{:style => "text-align:left;width:530px"}
+		%h3
+			Editar Información General
+	.span{:style => "float:right;text-align: right;width:60px"}
+		=link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "informacion_general", action: "index"}, {:class => "btn"}
+
+
+
+
+%p
+	Los campos con (*) son obligatorios.
+
+=link_to "", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "informacion_general", action: "index"}, {:id => "url", :style => "display:none"}
+
+=form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "informacion_general", action: "procesar_editar_asignatura"}, {id: "formulario_editar_informacion_general", :class => "form-horizontal"}) do
+
+	.control-group
+		%label{:class => "control-label"}
+			%strong Código (*):
+		.controls
+			= text_field :informacion_general, :codigo, {:placeholder => "1234", :value => @sitio_web.asignatura.codigo, :class => "input-large"}
+			
+	.control-group
+		%label{:class => "control-label"}
+			%strong Nombre (*):
+		.controls
+			= text_field :informacion_general, :nombre, {:placeholder => "Nombre", :value => @sitio_web.asignatura.nombre, :class => "input-large"}
+		
+	.control-group
+		%label{:class => "control-label"}
+			%strong Créditos (*):
+		.controls
+			= text_field :informacion_general, :unidades_credito, {:placeholder => "5", :value => @sitio_web.asignatura.unidades_credito, :class => "input-large"}
+
+	.control-group
+		%label{:class => "control-label"}
+			%strong Requisitos:
+		.controls
+			= text_area :informacion_general, :requisitos, {:placeholder => "Asignatura I, Asignatura II, Asignatura III, ...", :value => @sitio_web.asignatura.requisitos}
+	
+	.control-group
+		%label{:class => "control-label"}
+			%strong Tipo (*):
+		.controls
+			= select(:informacion_general, :tipo, @tipos, {:prompt => "Seleccione", :selected => @sitio_web.asignatura.tipo})
+
+	#informacion_general_clasificaciones{:style => "display:none"}
+		.control-group
+			%label{:class => "control-label"}
+				#clasificacion_texto
+			.controls
+				#informacion_general_tipo_obligatoria{:style => "display:none"}
+					-if @sitio_web.asignatura.tipo == "Obligatoria"
+						= select(:informacion_general, :clasificacion_obligatoria, @clasificaciones, {:prompt => "Seleccione", :selected => @sitio_web.asignatura.asignatura_clasificacion.clasificacion.nombre})
+						:javascript
+							$('#informacion_general_clasificaciones').show();
+							$('#informacion_general_tipo_obligatoria').show();
+							$('#clasificacion_texto').empty().append("<b>Semestre (*):");
+					-else
+						= select(:informacion_general, :clasificacion_obligatoria, @clasificaciones, {:prompt => "Seleccione"})
+
+
+				#informacion_general_tipo_electiva{:style => "display:none"}
+					=hidden_field :informacion_general, :cantidad_menciones, {:value => "1", :autocomplete => "off"}
+					-if @sitio_web.asignatura.tipo == "Electiva" || @sitio_web.asignatura.tipo == "Obligatoria optativa"
+
+						%p{:id => "p_mencion_informacion_general_1"}
+							= select(:informacion_general, :mencion_1, @menciones, {:prompt => "Seleccione", :selected => @sitio_web.asignatura.asignatura_mencion.first.mencion.nombre}, {:onchange=>"mencion_otra_informacion_general(this.id)"})
+							= text_field(:informacion_general, :mencion_otra_1, {:placeholder => "Mención", :style => "display:none;width: 185px;"})
+							%a{:id => "agregar_mencion_a_asignatura_informacion_general_button", :class => "btn", :title => "Agregar mención"}
+								%i{:class => "icon-plus"}
+						-if @sitio_web.asignatura.asignatura_mencion.size > 1
+							-@sitio_web.asignatura.asignatura_mencion.each_with_index do |asignatura_mencion, index|
+								-if index > 0
+									-id = (index+1).to_s
+									%p{:id => "p_mencion_informacion_general_"+id}
+										= select(:informacion_general, "mencion_"+id, @menciones, {:prompt => "Seleccione", :selected => asignatura_mencion.mencion.nombre}, {:onchange=>"mencion_otra_informacion_general(this.id)"})
+										= text_field(:informacion_general, "mencion_otra_"+id, {:placeholder => "Mención", :style => "display:none;width: 185px;"})
+										%a{:href=>"#", :id=>"eliminar_mencion_a_informacion_general_button_"+id, :class=>"btn", :title=>"Eliminar mención", :onclick=>"eliminar_mencion_de_la_tabla_informacion_general_nueva(this.id);return false;", :style=>"margin-left: 4px;"}
+											%i{:class => "icon-trash"}
+											
+									:javascript
+										$("#informacion_general_mencion_otra_#{id}").autocomplete({	source: #{@menciones} });
+										$("#informacion_general_cantidad_menciones").val(parseInt($("#informacion_general_cantidad_menciones").val()) + 1 );
+
+						:javascript
+							$('#informacion_general_clasificaciones').show();
+							$('#informacion_general_tipo_electiva').show();
+							$('#clasificacion_texto').empty().append("<b>Mención (*):");
+
+
+					-else
+						%p{:id => "p_mencion_informacion_general_1"}
+							= select(:informacion_general, :mencion_1, @menciones, {:prompt => "Seleccione"}, {:onchange=>"mencion_otra_informacion_general(this.id)"})
+							= text_field(:informacion_general, :mencion_otra_1, {:placeholder => "Mención", :style => "display:none;width: 185px;"})
+
+
+							%a{:id => "agregar_mencion_a_asignatura_informacion_general_button", :class => "btn", :title => "Agregar mención"}
+								%i{:class => "icon-plus"}
+			
+	.control-group
+		.controls
+			= submit_tag "Guardar", :class=>"btn btn-primary", :id => "editar_informacion_general_submit"
+			%span{:id => 'ajax-loader', :style => "display:none"}
+				=image_tag "ajax-loader.gif"
+
+%p
+	%ul
+		%strong Nota:
+		%li El código debe ser de 4 dígitos numéricos.
+		%li Los créditos son las unidades de crédito de la asignatura y estas deben ser numéricas.
+		%li La clasificación se utiliza para ubicar la asignatura en el portal.
+		%li Las asignaturas complementarias se ubicarán en la sección Complementaria del menú izquierdo.

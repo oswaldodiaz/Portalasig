@@ -1,0 +1,141 @@
+:javascript
+	$(document).ready(function() {
+		$("#informacion_general_mencion_otra_1").autocomplete({	source: #{@menciones} });
+	});
+
+.row-fluid{:style => "padding-bottom:10px"}
+	.span{:style => "text-align:left;width:530px"}
+		%p
+			Los campos con (*) son obligatorios.
+	.span{:style => "float:right;text-align: right;width:60px"}
+		=link_to "Volver", {:action => "estudiantes", :controller => "admin"}, {:class => "btn"}
+
+=link_to "", {:action => "asignaturas", :controller => "admin"}, :style => "display:none", :id => "url"
+
+=form_tag({:controller => "admin", :action => "procesar_editar_asignatura"}, {:class => "form-horizontal", :id => "formulario_editar_asignatura_administrador"})do  
+	= hidden_field :asignatura, :id, {:placeholder => "12345678", :class => "input-large"}
+	.control-group
+		%label{:class => "control-label"}
+			%strong Código (*):
+		.controls
+			= text_field :asignatura, :codigo, {:placeholder => "1234", :class => "input-large"}
+			
+	.control-group
+		%label{:class => "control-label"}
+			%strong Nombre (*):
+		.controls
+			= text_field :asignatura, :nombre, {:placeholder => "Nombre", :class => "input-large"}
+		
+	.control-group
+		%label{:class => "control-label"}
+			%strong Licenciaturas (*):
+		.controls
+			= hidden_field :carreras, :cantidad, {:value => @carreras.size}
+			%table
+				-carrera_anterior = ""
+				-@carreras.each_with_index do |carrera,index|
+					-if index%2 == 0
+						-carrera_anterior = carrera
+					-else
+						%tr
+							%td
+								=check_box_tag 'check_box_carrera_'+(index).to_s, carrera_anterior, false, :class => "carreras", :style => "margin-top: -4px;"
+								=carrera_anterior
+							%td
+								=check_box_tag 'check_box_carrera_'+(index+1).to_s, carrera, false, :class => "carreras", :style => "margin-top: -4px;"
+								=carrera
+						-carrera_anterior = ""
+				-if carrera_anterior != ""
+					%tr
+						%td
+							=check_box_tag 'check_box_carrera_'+(@carreras.size).to_s, carrera_anterior, false, :class => "carreras", :style => "margin-top: -4px;"
+							=carrera_anterior
+
+				-@asignatura.asignatura_carrera.each do |asignatura_carrera|
+					:javascript
+						$(":checkbox").filter(function() {
+							return this.value == "#{asignatura_carrera.carrera.nombre}";
+						}).prop("checked", "true");
+		
+	.control-group
+		%label{:class => "control-label"}
+			%strong Créditos (*):
+		.controls
+			= text_field(:asignatura, :unidades_credito, {:placeholder => "3", :class => "input-large"})
+	
+	.control-group
+		%label{:class => "control-label"}
+			%strong Requisitos:
+		.controls
+			= text_area :asignatura, :requisitos, {:placeholder => "Asignatura I, Asignatura II, Asignatura III, ..."}
+
+	.control-group
+		%label{:class => "control-label"}
+			%strong Tipo (*):
+		.controls
+			= select(:asignatura, :tipo, @tipos, {:prompt => "Seleccione"})
+
+	#clasificacion{:style => "display:none"}
+		.control-group
+			%label{:class => "control-label"}
+				#clasificacion_texto
+			.controls
+				#tipo_obligatoria{:style => "display:none"}
+					-if @asignatura.tipo == "Obligatoria"
+						= select(:a, :a, @clasificaciones, {:prompt => "Seleccione", :selected => @asignatura.asignatura_clasificacion.clasificacion.nombre}, {:id => "asignatura_clasificacion_obligatoria"})
+					-else
+						= select(:a, :a, @clasificaciones, {:prompt => "Seleccione"}, {:id => "asignatura_clasificacion_obligatoria"})
+					-if @asignatura.tipo == "Obligatoria"
+						:javascript
+							$('#clasificacion').show();
+							$('#tipo_obligatoria').show();
+							$('#clasificacion_texto').empty().append("<b>Semestre (*):");
+
+				#tipo_electiva{:style => "display:none"}
+					=hidden_field :cantidad, :menciones, {:value => "1", :autocomplete => "off"}
+					-if @asignatura.tipo == "Electiva" || @asignatura.tipo == "Obligatoria optativa"
+						%p{:id => "p_mencion_1"}
+							= select(:asignatur, :mencion_1, @menciones, {:prompt => "Seleccione", :selected => @asignatura.asignatura_mencion.first.mencion.nombre}, {:onchange=>"asignatura_mencion_otra(this.id)", :id => "asignatura_mencion_1", :name => "asignatura[mencion_1]"})
+							= text_field(:asignatur, :mencion_otra_1, {:placeholder => "Mención", :style => "display:none;width: 200px;", :id => "asignatura_mencion_1", :name => "asignatura[mencion_1]"})
+							%a{:id => "agregar_mencion_a_asignatura_button", :class => "btn", :title => "Agregar mención"}
+								%i{:class => "icon-plus"}
+						-if @asignatura.asignatura_mencion.size > 1
+							-@asignatura.asignatura_mencion.each_with_index do |asignatura_mencion, index|
+								-if index > 0
+									-id = (index+1).to_s
+									%p{:id => "p_mencion_"+id}
+										= select(:a, :a, @menciones, {:prompt => "Seleccione", :selected => asignatura_mencion.mencion.nombre}, {:onchange=>"asignatura_mencion_otra(this.id)", :id => "asignatura_mencion_"+id, :name => "asignatura[mencion_"+id+"]"})
+										= text_field(:x, :A, {:placeholder => "Mención", :style => "display:none;width: 200px;", :id => "asignatura_mencion_"+id, :name => "asignatura[mencion_"+id+"]"})
+										%a{:href=>"#", :id=>"eliminar_mencion_a_asignatura_button_"+id, :class=>"btn", :title=>"Eliminar mención", :onclick=>"eliminar_mencion_de_la_tabla_asignatura_nueva(this.id);return false;", :style=>"margin-left: 4px;"}
+											%i{:class => "icon-trash"}
+											
+									:javascript
+										$("#asignatura_mencion_otra_#{id}").autocomplete({	source: #{@menciones} });
+										$("#cantidad_menciones").val(parseInt($("#cantidad_menciones").val()) + 1 );
+
+						:javascript
+							$('#clasificacion').show();
+							$('#tipo_electiva').show();
+							$('#clasificacion_texto').empty().append("<b>Mención (*):");
+
+					-else
+						%p{:id => "p_mencion_1"}
+							= select(:asignatur, :mencion_1, @menciones, {:prompt => "Seleccione"}, {:onchange=>"asignatura_mencion_otra(this.id)", :id => "asignatura_mencion_1"})
+							= text_field(:asignatur, :mencion_otra_1, {:id => "asignatura_mencion_otra_1", :placeholder => "Mención", :style => "display:none;width: 200px;"})
+							%a{:id => "agregar_mencion_a_asignatura_button", :class => "btn", :title => "Agregar mención"}
+								%i{:class => "icon-plus"}
+	
+	
+	.control-group
+		.controls	
+			= submit_tag "Guardar", :class=>"btn btn-primary", :id => "editar_asignatura_administrador_submit"
+			%span{:id => 'ajax-loader', :style => "display:none"}
+				=image_tag "ajax-loader.gif"
+
+%p
+	%ul
+		%strong Nota:
+		%li El código debe ser de 4 dígitos numéricos.
+		%li Los créditos son las unidades de crédito de la asignatura y deben ser numéricas.
+		%li La asignatura se ubicará en el portal según la licenciatura y la clasificación que se coloquen.
+		%li Las asignaturas complementarias se ubicarán en la sección Complementaria del menú izquierdo.

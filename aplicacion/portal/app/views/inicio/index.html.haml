@@ -1,0 +1,348 @@
+:javascript
+  $(document).ready(function() {
+    $("#asignatura_datos").autocomplete({
+      source: #{@asignatura_datos}
+    });
+
+    $("#li_obligatoria").click(function(){
+      $("#tabs_index-obligatorias").show();
+      $("#tabs_index-electivas").hide();
+      $("#tabs_index-otras").hide();
+
+      $("#li_electivas").parent().removeClass();
+      $("#li_otras").parent().removeClass();
+      $("#li_obligatoria").parent().addClass('active');
+
+      return false;
+    });
+
+    $("#li_electivas").click(function(){
+      $("#tabs_index-electivas").show();
+      $("#tabs_index-obligatorias").hide();
+      $("#tabs_index-otras").hide();
+
+      $("#li_obligatoria").parent().removeClass();
+      $("#li_otras").parent().removeClass();
+      $("#li_electivas").parent().addClass('active');
+
+      return false;
+    });
+
+    $("#li_otras").click(function(){
+      $("#tabs_index-otras").show();
+      $("#tabs_index-obligatorias").hide();
+      $("#tabs_index-electivas").hide();
+
+      $("#li_obligatoria").parent().removeClass();
+      $("#li_electivas").parent().removeClass();
+      $("#li_otras").parent().addClass('active');
+
+      return false;
+    });
+
+  });
+
+-carreras = ["Biología", "Computación", "Geoquímica", "Física", "Matemática", "Química", "Complementaria"]
+-existe = false
+-if @carrera
+  -carreras.each do |car|
+    -if params[:id] == car
+      -@carrera = car
+      -existe = true
+
+-unless existe
+  -@carrera = carreras[0]
+
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "font-size:14px;padding-top:5px;width:350px"}
+    %strong
+      =link_to "Inicio", :action => "index", :controller => "inicio"
+      >
+      =link_to "Asignaturas", :action => "index", :controller => "inicio"
+      >
+      =link_to "#{@carrera}", :action => "index", :controller => "inicio", :id => @carrera
+
+  .span{:style => "float:right;width:350px"}
+    -if session[:usuario] && Docente.where(:id => session[:usuario].id).size > 0
+      =link_to '<i class="icon-plus"></i>'.html_safe, {:action => "agregar_asignatura", :controller => "inicio"}, :class => "btn btn-primary", :id => "agregar_asignatura_submit", :title => "Agregar una asignatura", :style => "float: right;margin-left:5px"
+
+    =link_to '<i class="icon-search"></i>'.html_safe, {:action => "asignatura", :controller => "inicio"}, :class => "btn btn-primary", :id => "buscar_asignatura_submit", :title => "Buscar una asignatura", :style => "float: right;margin-left:5px"
+    
+    = text_field :asignatura, :datos, {:placeholder => "Código - Nombre", :class => "span8 search-query", :style => "float: right;margin-left:5px,width:150px"}
+
+    #imagen_de_carga{:style => "display:none; float: right;"}
+      =image_tag "ajax-loader.gif"
+
+    
+
+
+
+-if carrera_object = Carrera.where(:nombre => @carrera).first
+
+  -if @carrera != "Complementaria"
+    %ul{:class=>"nav nav-pills", :style => "margin-bottom:0px"}
+      %li{:class=>"active"}
+        %a{:href=>"#", :id => "li_obligatoria"}
+          Obligatorias
+      %li
+        %a{:href=>"#", :id => "li_electivas"}
+          Electivas
+      -if carrera_object.tiene_asignaturas_otras?
+        %li
+          %a{:href=>"#", :id => "li_otras"}
+            Otras
+
+    
+    %div{:id => "tabs_index-obligatorias", :style => "padding:1px"}
+      
+
+      -if carrera_object.tiene_asignaturas_obligatorias?
+        %table{:class => "tablaAsignatura"}
+          
+          -primero = true
+          -@clasificaciones.each_with_index do |clasificacion, index|
+
+            -if clasificacion_object = Clasificacion.where(:nombre => clasificacion).first
+
+              -asignaturas = Asignatura.where(:tipo => "Obligatoria", :id => AsignaturaClasificacion.where(:asignatura_id => AsignaturaCarrera.where(:carrera_id => carrera_object.id).collect{|x| x.asignatura_id}, :clasificacion_id => clasificacion_object.id).collect{ |x| x.asignatura_id})
+
+              -if asignaturas.size > 0
+                
+                -if primero
+                  -primero = false
+                  -style = "vertical-align:bottom;"
+                -else
+                  -style = "height:50px;vertical-align:bottom;"
+                %tr{:style => style}
+                  %td
+                    %strong
+                      %h4{:style => "text-align:left;"}
+                        =clasificacion
+                  
+                  %td
+                    %strong 
+                      Código
+                  %td
+                    %strong
+                      UC
+                  %td
+                    %strong
+                      Último período
+                  -if session[:usuario] && Docente.where(:id => session[:usuario].id).size > 0
+                    %td
+                      %strong
+                        Crear nuevo sitio
+
+                -asignaturas.each do |asignatura|
+                  -if asignatura.tiene_sitio_web?
+                    -clase_editable = "tr-editable"
+                  %tr
+                    %td{:style => "text-align:left;", :class => "#{clase_editable}"}
+                      -if asignatura.tiene_sitio_web?
+                        =link_to "#{asignatura.nombre}", :controller => "bienvenida", :action => "index", :asignatura_nombre => "#{asignatura.nombre_url}", :semestre => "#{asignatura.ultimo_sitio_web.periodo}"
+
+
+                      -else
+                        =asignatura.nombre
+                    %td 
+                      =asignatura.codigo
+                    %td
+                      =asignatura.unidades_credito
+                    %td
+                      -if asignatura.tiene_sitio_web?
+                        =asignatura.ultimo_sitio_web.periodo
+                      -else
+                        No tiene
+                    -if session[:usuario] && session[:usuario].rol.class == Docente && asignatura.se_puede_crear_sitio_web?
+                      %td
+                        %a{:href=>"#Crear_nuevo_sitio", "data-toggle"=>"modal", :style => "white-space:nowrap;", :id => "llamador_Modal_nuevo_sitio", :title => "Crear un sitio web para la asignatura #{asignatura.nombre}", :onclick => "cambiar_id_modal_nuevo_sitio_web('#{asignatura.id}')"}
+                          %i{:class => "icon-file"}
+        
+      -else
+        %p
+          %strong
+            No existe ninguna asignatura obligatoria para esta licenciatura.
+
+    %div{:id => "tabs_index-electivas", :style => "padding:1px;display:none"}
+      -if carrera_object.tiene_asignaturas_electivas?
+        %table{:class => "tablaAsignatura"}
+          
+          -@menciones = Mencion.order("nombre").where(:id => MencionCarrera.where(:carrera_id => carrera_object.id).collect{|x| x.mencion_id}).each_with_index do |mencion, index|
+
+            -asignaturas = Asignatura.where(:tipo => ["Obligatoria optativa","Electiva"], :id => AsignaturaMencion.where(:asignatura_id => AsignaturaCarrera.where(:carrera_id => carrera_object.id).collect{|x| x.asignatura_id}, :mencion_id => mencion.id).collect{ |x| x.asignatura_id})
+
+            -if asignaturas.size > 0
+              -if index > 0
+                -style = "height:50px;vertical-align:bottom;"
+              -else
+                -style = "vertical-align:bottom;"
+              %tr{:style => style}
+                %td
+                  %strong
+                    %h4{:style => "text-align:left;"}
+                      =mencion.nombre
+
+                -if index == 0
+                  %td
+                    %strong 
+                      Código
+                  %td
+                    %strong
+                      UC
+                  %td
+                    %strong
+                      Último período
+                  -if session[:usuario] && session[:usuario].rol.class == Docente
+                    %td
+                      %strong
+                        Crear nuevo sitio
+
+              -asignaturas.each do |asignatura|
+                -if asignatura.tiene_sitio_web?
+                  -clase_editable = "tr-editable"
+                %tr
+                  %td{:style => "text-align:left;", :class => "#{clase_editable}"}
+                    -if asignatura.tiene_sitio_web?
+                      =link_to "#{asignatura.nombre}", :controller => "bienvenida", :action => "index", :asignatura_nombre => "#{asignatura.nombre_url}", :semestre => "#{asignatura.ultimo_sitio_web.periodo}"
+
+                    -else
+                      =asignatura.nombre
+                  %td 
+                    =asignatura.codigo
+                  %td
+                    =asignatura.unidades_credito
+                  %td
+                    -if asignatura.tiene_sitio_web?
+                      =asignatura.ultimo_sitio_web.periodo
+                    -else
+                      No tiene
+                  -if session[:usuario] && session[:usuario].rol.class == Docente && asignatura.se_puede_crear_sitio_web?
+                    %td
+                      %a{:href=>"#Crear_nuevo_sitio", "data-toggle"=>"modal", :style => "white-space:nowrap;", :id => "llamador_Modal_nuevo_sitio", :title => "Crear un sitio web para la asignatura #{asignatura.nombre}", :onclick => "cambiar_id_modal_nuevo_sitio_web('#{asignatura.id}')"}
+                        %i{:class => "icon-file"}
+        
+      -else
+        %p
+          %strong
+            No existe ninguna asignatura electiva para esta licenciatura.
+
+    -if carrera_object.tiene_asignaturas_otras?
+      %div{:id => "tabs_index-otras", :style => "padding:1px;display:none"}
+        %table{:class => "tablaAsignatura"}
+          %tr{:style => "vertical-align:bottom;"}
+            %td
+              %strong
+                %h4{:style => "text-align:left;"}
+                  Asignatura
+            %td
+              %strong 
+                Código
+            %td
+              %strong
+                UC
+            %td
+              %strong
+                Último período
+            -if session[:usuario] && session[:usuario].rol.class == Docente
+              %td
+                %strong
+                  Nuevo
+
+          -carrera_object.asignaturas_tipo_otra.each do |asignatura|
+            -if asignatura.tiene_sitio_web?
+              -clase_editable = "tr-editable"
+            %tr
+              %td{:style => "text-align:left;", :class => "#{clase_editable}"}
+                -if asignatura.tiene_sitio_web?
+                  =link_to "#{asignatura.nombre}", :controller => "bienvenida", :action => "index", :asignatura_nombre => "#{asignatura.nombre_url}", :semestre => "#{asignatura.ultimo_sitio_web.periodo}"
+
+                -else
+                  =asignatura.nombre
+              %td 
+                =asignatura.codigo
+              %td
+                =asignatura.unidades_credito
+              %td
+                -if asignatura.tiene_sitio_web?
+                  =asignatura.ultimo_sitio_web.periodo
+                -else
+                  No tiene
+              -if session[:usuario] && session[:usuario].rol.class == Docente && asignatura.se_puede_crear_sitio_web?
+                %td
+                  %a{:href=>"#Crear_nuevo_sitio", "data-toggle"=>"modal", :style => "white-space:nowrap;", :id => "llamador_Modal_nuevo_sitio", :title => "Crear un sitio web para la asignatura #{asignatura.nombre}", :onclick => "cambiar_id_modal_nuevo_sitio_web('#{asignatura.id}')"}
+                    %i{:class => "icon-file"}
+        
+        
+
+  -else
+    %div{:id => "tabs_index-complementarias", :style => "padding:1px"}
+      -if Asignatura.where(:tipo => "Complementaria").size > 0
+        %table{:class => "tablaAsignatura"}
+          %tr{:style => "vertical-align:bottom;"}
+            %td
+              %strong
+                %h4{:style => "text-align:left;"}
+                  Asignatura
+            %td
+              %strong 
+                Código
+            %td
+              %strong
+                UC
+            %td
+              %strong
+                Último período
+            -if session[:usuario] && session[:usuario].rol.class == Docente
+              %td
+                %strong
+                  Crear nuevo sitio
+
+          -Asignatura.where(:tipo => "Complementaria").each do |asignatura|
+            -if asignatura.tiene_sitio_web?
+              -clase_editable = "tr-editable"
+            %tr
+              %td{:style => "text-align:left;", :class => "#{clase_editable}"}
+                -if asignatura.tiene_sitio_web?
+                  =link_to "#{asignatura.nombre}", :controller => "bienvenida", :action => "index", :asignatura_nombre => "#{asignatura.nombre_url}", :semestre => "#{asignatura.ultimo_sitio_web.periodo}"
+
+                -else
+                  =asignatura.nombre
+              %td 
+                =asignatura.codigo
+              %td
+                =asignatura.unidades_credito
+              %td
+                -if asignatura.tiene_sitio_web?
+                  =asignatura.ultimo_sitio_web.periodo
+                -else
+                  No tiene
+              -if session[:usuario] && session[:usuario].rol.class == Docente && asignatura.se_puede_crear_sitio_web?
+                %td
+                  %a{:href=>"#Crear_nuevo_sitio", "data-toggle"=>"modal", :style => "white-space:nowrap;", :id => "llamador_Modal_nuevo_sitio", :title => "Crear un sitio web para la asignatura #{asignatura.nombre}", :onclick => "cambiar_id_modal_nuevo_sitio_web('#{asignatura.id}')"}
+                    %i{:class => "icon-file"}
+      -else
+        %p
+          %strong
+            No existe ninguna asignatura complementaria.
+
+-else
+  %p
+    %strong
+      No existe ninguna asignatura.
+
+=link_to "", {:action => "buscar_semestres_disponibles_para_asignatura_por_id", :controller => "ajax"}, :style => "display:none", :id => "buscar_semestres_disponibles_para_asignatura_por_id"
+
+
+#Crear_nuevo_sitio{:class=>"modal hide fade"}
+  =form_tag({:controller => "inicio", :action => "crear_sitio_web"}, {:style => "padding-bottom:0px;margin-bottom:0px"})do  
+    .modal-header
+      %button{:class=>"close", "data-dismiss"=>"modal", "aria-hidden"=>"true"}x
+      %h3 Introduzca el semestre:
+    .modal-body
+      %p{:style => "margin:0px auto; text-align:center;"}
+        = hidden_field :modal, :asignatura_id
+        Semestre:
+        = select(:semestre, :semestre, {:class => "input-small"})
+
+    .modal-footer
+      = submit_tag "Crear", {:class=>"btn btn-primary", :id => "crear_sitio_button"}

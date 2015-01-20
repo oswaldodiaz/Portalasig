@@ -1,0 +1,34 @@
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %h3
+      Editar Entrega
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "entrega", action: "index"}, {:class => "btn"}
+
+=link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "entrega", action: "ver_entrega", :id => @entrega.id}, {:style => "display:none", :id => "url"}
+
+
+%p
+  Los campos con (*) son obligatorios.
+
+=form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "entrega", :action => "procesar_editar_entrega"}, {:class => "form-horizontal", :id => "formulario_editar_entrega"})do  
+
+  = hidden_field :entrega, :id, {:value => @entrega.id}
+
+  .control-group
+    %label{:class => "control-label"}
+      %strong Nombre (*):
+    .controls
+      = text_area :entrega, :nombre, {:placeholder => "Nombre de la entrega", :class => "input-large"}
+      
+  .control-group
+    %label{:class => "control-label"}
+      %strong Fecha de entrega (*):
+    .controls
+      = text_field :entrega, :fecha_entrega, {:placeholder => Time.now.strftime("%d/%m/%Y"), :class => "entrega_fecha input-large", :value => @entrega.fecha_entrega.strftime("%d/%m/%Y")}
+      
+  .control-group
+    .controls
+      = submit_tag "Guardar", :class=>"btn btn-primary", :id => "editar_entrega_submit"
+      %span{:id => 'ajax-loader', :style => "display:none"}
+        =image_tag "ajax-loader.gif"

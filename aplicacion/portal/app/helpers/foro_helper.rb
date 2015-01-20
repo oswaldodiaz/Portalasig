@@ -1,0 +1,2 @@
+module ForoHelper
+end

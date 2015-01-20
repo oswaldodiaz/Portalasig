@@ -1,0 +1,45 @@
+:javascript
+  $(document).ready(function() {
+    $( ".foro" ).click(function(){
+      window.location = $( "#enlace" ).attr("href")+"/"+ $(this).attr("id");
+    });
+  });
+
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:230px"}
+    %h3
+      Foros
+      -if @es_del_grupo_docente
+        =link_to '<i class="icon-plus"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "foro", :action => "crear"}, :id => "agregar_foro_button", :title => "Crear un foro", :style => "padding-left:20px"
+
+  -if @es_estudiante_del_sitio_web
+    .span{:style => "float:right;text-align:right;width:250px"}  
+      =link_to 'Crea un Foro'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "foro", :action => "crear"}, :id => "agregar_foro_button", :class => "btn btn-primary"
+
+
+
+-if @sitio_web.foro.size > 0
+  -@sitio_web.foro.order("created_at DESC").each_with_index do |foro_sitio_web, index|
+
+    =link_to "", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "foro", :action => "foros"}, {:style => "display: none;", :id => "enlace"}
+
+    %div{:class => "btn foro", :href => "#", :id => foro_sitio_web.id.to_s}
+      .row-fluid{:style => "text-align: justify;margin: 10px 0px 5px 20px;width: 565px;"}
+        %h4
+          =foro_sitio_web.titulo
+      .row-fluid{:style => "margin: 10px 0px 0px 20px;width: 555px;"}
+          
+        .span{:style => "float:right;text-align: right;width:555px"}
+          %h5
+            =foro_sitio_web.usuario.nombre_y_apellido
+            \-
+            =foro_sitio_web.created_at.strftime("%d/%m/%Y %H:%M %P")
+    -if @es_del_grupo_docente || (session[:usuario] && foro_sitio_web.usuario_id == session[:usuario].id)
+      =link_to '<i class="icon-trash"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "foro", :action => "eliminar_foro", :id => foro_sitio_web.id}, :id => "eliminar_foro", :title => "Eliminar Foro", :onclick => "if(!confirm('¿Está seguro que quiere eliminar este foro?')) return false;"
+
+    %hr{:style => "margin: 0px 0px 15px 0px; display: block; height: 1px;border: 0;"}
+    
+
+-else
+  %p
+    No existe ningún foro para este sitio web.

@@ -1,0 +1,106 @@
+:javascript
+  $(document).ready(function() {
+    $("#usuario_cedula").autocomplete({
+      source: #{@cedulas}
+    }); 
+  });
+
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %h3
+      Agregar Estudiante a sección
+      =@seccion_sitio_web.seccion.nombre
+
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "estudiantes", action: "index"}, {:class => "btn"}
+
+
+%ul{:class=>"nav nav-pills", :style => "margin-bottom:0px"}
+  %li{:class=>"active"}
+    %a{:href=>"#", :id => "li_agregar_lista", :class => "li_agregar"}
+      Agregar lista de estudiantes
+  %li
+    %a{:href=>"#", :id => "li_agregar_uno", :class => "li_agregar"}
+      Agregar un estudiante
+        
+%div{:id => "div_agregar_lista", :class => "div_agregar"}
+  -if flash[:errores]
+    -texto = ""
+    -if flash[:errores].size > 1
+      -if flash[:errores].size > 5
+        -texto = "Este archivo no corresponde con el formato presentado en la imagen de abajo."
+      -else
+        -texto = "<ul>Disculpe, se cometieron los siguientes errores:"
+        -flash[:errores].each do |mensaje|
+          -texto += "<li>"
+          -texto += mensaje
+          -texto += "</li>"
+        -texto += "</ul>"
+    -else
+      -texto = flash[:errores][0]
+
+    :javascript
+      $('#mensajes').show();
+      $("#mensajes").attr('class', 'alert alert-error');
+      $('#flash').empty();
+      $('#flash').append("#{texto}");
+      $(document).ready(function() {
+        $('#li_agregar_lista').click();
+      });
+
+  %br
+  =form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "archivo", :action => "procesar_subir_lista_estudiantes_seccion"}, {:id => "formulario_subir_estudiante_a_seccion", :multipart => true, :onsubmit => "$('#submit_tag').attr('disabled','disabled');$('#ajax-loader2').show();"})do  
+
+    =hidden_field :seccion_sitio_web, :id, :value => @seccion_sitio_web.id
+    %table
+      %tr
+        %td
+          = file_field_tag :archivo, :accept => 'xls/xlsx/ods', :style => "width:360px"
+      %tr
+        %td
+          = submit_tag "Subir", :class => "btn btn-primary", :id => "submit_tag"
+          %span{:id => 'ajax-loader2', :style => "display:none"}
+            =image_tag "ajax-loader.gif"
+
+  %p
+    Suba la lista de estudiantes generada a través del sistema de Control de Estudios (CONEST) para agregar a los estudiantes al sitio web. Esta lista tiene un formato similar al presentado a continuación:
+  %br
+
+    =image_tag "formato_lista_estudiantes_seccion.png", :alt => "Ejemplo de lista de estudiantes de una sección"
+
+%div{:id => "div_agregar_uno", :class => "div_agregar", :style => "display:none"}
+  %p
+    Los campos con (*) son obligatorios.
+
+  =link_to "", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "estudiantes", action: "index"}, :style => "display:none", :id => "url"
+
+  =form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "estudiantes", :action => "procesar_agregar_estudiante_a_seccion"}, {:class => "form-horizontal", :id => "formulario_agregar_estudiante_a_seccion_sitio_web"})do  
+
+    = hidden_field :a, :a, {:id => "url", :value => "/"+@sitio_web.nombre_url+"/"+@sitio_web.periodo+'/estudiantes/index'}
+    =hidden_field :seccion_sitio_web, :id, :value => @seccion_sitio_web.id
+    .control-group
+      %label{:class => "control-label"}
+        %strong Cédula (*): 
+      .controls
+        = text_field :usuario, :cedula, {:placeholder => "12345678", :class => "input-large"}
+    .control-group
+      %label{:class => "control-label"}
+        %strong Nombres (*):
+      .controls
+        = text_field :usuario, :nombre, {:placeholder => "Nombre", :class => "input-large"}
+    .control-group
+      %label{:class => "control-label"}
+        %strong Apellidos (*):
+      .controls
+        = text_field :usuario, :apellido, {:placeholder => "Apellido", :class => "input-large"}
+    .control-group
+      %label{:class => "control-label"}
+        %strong Correo (*):
+      .controls
+        = text_field :usuario, :correo, {:placeholder => "ejemplo@ciens.ucv.ve", :class => "input-large"}
+    
+    .control-group
+      .controls
+        = submit_tag "Guardar", :class=>"btn btn-primary", :id => "agregar_estudiante_seccion_submit"
+        %span{:id => 'ajax-loader', :style => "display:none"}
+          =image_tag "ajax-loader.gif"

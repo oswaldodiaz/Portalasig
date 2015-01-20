@@ -1,0 +1,48 @@
+.row-fluid{:style => "padding-bottom:10px"}
+	.span{:style => "text-align:left;width:530px"}
+		%p
+			Los campos con (*) son obligatorios.
+
+	.span{:style => "float:right;text-align: right;width:60px"}
+		=link_to "Volver", {:action => "estudiantes", :controller => "admin"}, {:class => "btn"}
+
+=link_to "", {:action => "estudiantes", :controller => "admin"}, :style => "display:none", :id => "url"
+
+=form_tag({:controller => "admin", :action => "procesar_editar_estudiante"}, {:class => "form-horizontal", :id => "formulario_editar_estudiante"})do  
+
+	= hidden_field :usuario, :id
+	.control-group
+		%label{:class => "control-label"}
+			%strong Cédula (*): 
+		.controls
+			= text_field :usuario, :cedula, {:placeholder => "12345678", :class => "input-large"}
+
+	.control-group
+		%label{:class => "control-label"}
+			%strong Nombres (*):
+		.controls
+			= text_field :usuario, :nombre, {:placeholder => "Nombre", :class => "input-large"}
+	
+	.control-group
+		%label{:class => "control-label"}
+			%strong Apellidos (*):
+		.controls
+			= text_field :usuario, :apellido, {:placeholder => "Apellido", :class => "input-large"}
+		
+	.control-group
+		%label{:class => "control-label"}
+			%strong Correo (*):
+		.controls
+			= text_field :usuario, :correo, {:placeholder => "ejemplo@ciens.ucv.ve", :class => "input-large"}
+
+	.control-group
+		.controls
+			= submit_tag "Guardar", :class=>"btn btn-primary",:id => "editar_estudiante_submit"
+			%span{:id => 'ajax-loader', :style => "display:none"}
+				=image_tag "ajax-loader.gif"
+%p
+	%ul
+		%strong Nota:
+		%li La cédula debe ser numérica.
+		%li Todos los campos son obligatorios.
+

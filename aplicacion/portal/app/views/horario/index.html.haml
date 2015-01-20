@@ -1,0 +1,62 @@
+%h3{:style => "padding-bottom:10px"}
+	Horarios
+	-if @sitio_web.horario.size > 0 || @es_del_grupo_docente
+		-if @es_del_grupo_docente
+			-if @sitio_web.horario.size > 0
+				=link_to '<i class="icon-pencil"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "horario", :action => "editar"}, :id => "agregar_horario_submit", :title => "Editar Horario", :style => "padding-left:20px"
+			-else
+				=link_to '<i class="icon-plus"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "horario", :action => "editar"}, :id => "agregar_horario_submit", :title => "Agregar Horario", :style => "padding-left:20px"
+	    
+
+
+	
+-if @sitio_web.horario.size > 0
+	-Horario.order("tipo DESC").collect{|x| x.tipo}.uniq.each do |tipo|
+		-if Horario.where(:tipo => tipo, :sitio_web_id => @sitio_web.id).size > 0
+			-if Horario.where(:tipo => tipo, :sitio_web_id => @sitio_web.id).first.tipo == tipo
+				%strong
+					%h4
+						=tipo
+				%table{:class => "tabla table-striped table-bordered"}
+					%thead
+						%tr
+							%td Docente
+							%td Sección
+							%td Día
+							%td Hora
+							%td Aula
+							-if @es_del_grupo_docente
+								%td Eliminar
+					%tbody
+						-Horario.order("usuario_id").where(:tipo => tipo, :sitio_web_id => @sitio_web.id).each do |horario|
+							%tr
+								%td{:style => "text-align:center"}
+									=horario.usuario.nombre_y_apellido
+								%td{:style => "text-align:center"}
+									=horario.seccion.nombre
+								%td
+									=horario.dia
+								%td
+									=horario.hora_inicio
+									=((horario.hora_inicio.to_i < 12)? "am" : "pm")
+									\-
+									=horario.hora_fin
+									=((horario.hora_fin.to_i < 12)? "am" : "pm")
+								%td
+									-if horario.aula
+										=horario.aula
+									-else
+										\-
+								-if @es_del_grupo_docente
+									%td
+
+										=link_to '<i class="icon-trash"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "horario", :action => "eliminar", :id => horario.id}, :id => "eliminar_horario_submit", :title => "Eliminar horario", :style => "padding-left:20px", :onclick => "if(!confirm('¿Está seguro que quiere eliminar el horario?')) return false;"
+				%br
+	
+-elsif @es_del_grupo_docente
+	%p
+		No existe ningún horario para este sitio web.
+	
+		
+
+		

@@ -1,0 +1,189 @@
+!!!
+%html
+  %head
+    %title Portal de sitios web de asignaturas de la Facultad de Ciencias de la Universidad Central de Venezuela
+    = stylesheet_link_tag    "application", :media => "all"
+    = javascript_include_tag "application", :media => "all"
+    = csrf_meta_tags 
+    <style type="text/css">
+    div.dialog {
+    width: 600px;
+    margin: 0px auto;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    padding: 10px auto;
+    border: 1px solid #ccc;
+    border-right-color: #999;
+    border-bottom-color: #999;
+    text-align:center
+    }
+    </style>
+  %body
+    #cabecera
+      #menu_ciencias
+        %ul
+          %li
+            %a{:href => "http://www.ciens.ucv.ve/ciens", :style =>"color:#FFFFFF;" }Facultad de Ciencias
+
+            %ul
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/autoridades/" }Autoridades
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/historia/"}Historia
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/estructura-academica/"}Estructura Académica
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/estructura-organica/"}Estructura Orgánica
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/mision-y-objetivos-2/"}Misión y Objetivos
+
+          %li
+            %a{:href => "http://www.ciens.ucv.ve/ciens" , :style =>"color:#FFFFFF;"}Docencia
+            %ul
+              %li
+                %a{:href => "#"}Escuelas
+                %ul
+                  %li
+                    %a{:href => "http://www.ucv.ve/estructura/facultades/facultad-de-ciencias/escuelas/biologia.html"}Biología
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/escueladecomputacion/inicio/index"}Computación
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/fisica/"}Física
+                  %li
+                    %a{:href => "http://gea.ciens.ucv.ve/geoquimi/"}Geoquímica
+                  %li
+                    %a{:href => "http://www.matematica.ciens.ucv.ve/"}Matemática
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/quimica/"}Química
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/postgrado/"}Postgrado
+
+          %li
+            %a{:href => "#" , :style =>"color:#FFFFFF;"}Investigación
+            %ul
+              %li
+                %a{:href => "http://www.coordinv.ciens.ucv.ve/investigacion/"}Coordinación de Investigación
+              %li
+                %a{:title => "Instituto de Zoología y Ecología Tropical", :href => "http://www.coordinv.ciens.ucv.ve/investigacion/zoologia_tropical.php"}Instituto de Zoología y Ecología&hellip;
+              %li
+                %a{:title => "Instituto de Ciencia y tecnología de Alimentos", :href => "http://www.ciens.ucv.ve/ciens/icta"}Instituto de Ciencia y tecnología de&hellip;
+              %li
+                %a{:href => "http://www.coordinv.ciens.ucv.ve/investigacion/biologia_experimental.php"}Instituto de Biología Experimental
+              %li
+                %a{:href => "http://www.coordinv.ciens.ucv.ve/investigacion/ciencias_de_la_tierra.php"}Instituto de Ciencias de la Tierra  
+
+          %li
+            %a{:href => "#" , :style =>"color:#FFFFFF;"}Extensión
+            %ul
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/coordinacion-de-extension/"}Coordinación de extensión
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/coordinacion-de-extension/situacion-universitaria/"}Situación universitaria
+
+
+          %li
+            %a{:href => "#", :style =>"color:#FFFFFF;"}Secciones
+            %ul
+              %li
+                %a{:href => "#"}Dependencias
+                %ul
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/consejo-de-facultad/"}Consejo de Facultad
+                    %ul
+                      %li
+                        %a{:href => "http://www.ciens.ucv.ve/ciens/actas-y-minutas/"}Actas 2011
+                      %li
+                        %a{:href => "http://www.ciens.ucv.ve/ciens/actas-2012/"}Actas 2012
+                  %li
+                    %a{:href => "http://www.coordinv.ciens.ucv.ve/investigacion/"}Coodinación de Investigación
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/postgrado/"}Coordinación de Postgrado
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/coordinacion-de-extension/"}Coordinación de Extensión
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/coordinacion-academica1/"}Coordinación Académica
+                    %ul
+                      %li
+                        %a{:href => "http://www.ciens.ucv.ve/ciens/noticias/"}Noticias
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/coordad"}Coordinación Administrativa
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciencias/comision_clascentral.htm"}Comisión Clasificadora Central
+
+              %li
+                %a{:href => "#"}Servicios
+                %ul
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ccc/"}Centro de Computación
+                  %li
+                    %a{:href => "https://w3.ciens.ucv.ve/ccc/soporte_mod.php"}Solicitud de Soporte
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/servicio-comunitario/"}Servicio Comunitario
+                  %li
+                    %a{:href => "http://biblioteca.ciens.ucv.ve/"}Biblioteca
+                  %li
+                    %a{:href => "http://www.ceneac.com.ve/"}CENEAC
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/msdn/"}MSDN
+                  %li
+                    %a{:href => "#"}Estudiantes
+                    %ul
+                      %li
+                        %a{:href => "https://estudiantes.ciens.ucv.ve/",}CONEST
+                      %li
+                        %a{:href => "http://www.ciens.ucv.ve/ciens/servicio-de-orientacion-2/"}Servicio de Orientación
+                  %li
+                    %a{:href => "#"}Profesores
+                    %ul
+                      %li
+                        %a{:href => "https://docentes.ciens.ucv.ve/"}CONEST
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciencias/directorio.php"}Directorio
+
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciencias/admision.htm"}Admisión
+              %li
+                %a{:href => "#"}Normativa
+                %ul
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciencias/busqueda_minuta_acta.php"}Buscar actas/minutas
+              %li
+                %a{:href => "http://www.egresadosucv.org/"}Egresados
+              %li
+                %a{:href => "#"}Aspectos Administrativos
+                %ul
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/ofertas-de-empleo/"}Ofertas de Empleo
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/contrataciones/"}Contrataciones
+
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/galeria/"}Galería
+
+          %li
+            =link_to "Créditos", {:action => "creditos", :controller => "inicio"}, {:style =>"color:#FFFFFF;"}
+            
+
+      #barra_superior
+        #logo_ciencias
+          %a{:href => "http://www.ucv.ve", :alt => "Logo de la UCV", :style => "float:right;padding-right:5px"}
+            =image_tag "logociens.png"
+        #logo_ucv
+          %a{:href => "http://www.ciens.ucv.ve", :alt => "Logo de la Facultad de Ciencias de la UCV", :style => "padding-left:5px"}
+            =image_tag "ucv1.png"
+        #titulo          
+          %h1 Portal de sitios web de asignaturas
+          %h2 Facultad de Ciencias - Universidad Central de Venezuela
+          
+    #cuerpo
+      .dialog
+        %h2 La página que estas buscando no existe.
+        %p
+          A lo mejor usted escribió mal la dirección url o esta página ya no existe.
+        =link_to "Volver", {:action => "index", :controller => "inicio"}
+      
+    #pie_pagina
+      %p :: Universidad Central de Venezuela :: Facultad de Ciencias :: 
+      %p Paseo Los Ilustres Urb. Valle Abajo. Código Postal 1040. Caracas-Venezuela 
+      %p Copyright © 2013 Se reservan todos los derechos
+      

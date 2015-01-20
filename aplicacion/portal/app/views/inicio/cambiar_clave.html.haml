@@ -1,0 +1,32 @@
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %p
+      Los campos con (*) son obligatorios.
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:action => "index", :controller => "inicio"}, {:class => "btn"}
+
+
+=link_to "", {:action => "index", :controller => "inicio"}, :style => "display:none", :id => "url"
+
+=form_tag({:controller => "inicio", :action => "procesar_cambiar_clave"}, {:class => "form-horizontal", :id => "formulario_procesar_cambiar_clave"})do  
+  = hidden_field :usuario, :id, {:value => @usuario.id}
+  .control-group
+    %label{:class => "control-label"}
+      %strong Clave actual (*):
+    .controls
+      = password_field :usuario, :clave_actual, {:class => "input-large"}
+  .control-group
+    %label{:class => "control-label"}
+      %strong Clave nueva (*): 
+    .controls
+      = password_field :usuario, :clave_nueva, {:class => "input-large"}
+  .control-group
+    %label{:class => "control-label"}
+      %strong Confirmar clave (*):
+    .controls
+      = password_field :usuario, :confirmacion, {:class => "input-large"}
+  .control-group
+    .controls 
+      = submit_tag "Guardar", :class=>"btn btn-primary", :id => "guardar_clave_nueva_submit"
+      %span{:id => 'ajax-loader', :style => "display:none"}
+        =image_tag "ajax-loader.gif"

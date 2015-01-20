@@ -1,0 +1,97 @@
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %h3
+      Editar Evaluaciones
+      %a{:id => "agregar_evaluacion_button", :title => "Agregar evaluación", :style => "padding-left:20px;"}
+        %i{:class => "icon-plus"}
+
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "evaluacion", action: "index"}, {:class => "btn"}
+
+%p
+  Los campos con (*) son obligatorios.
+
+=link_to "", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "evaluacion", action: "index"}, :style => "display:none", :id => "url"
+
+=form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "evaluacion", :action => "procesar_editar"}, {:class => "form-horizontal", :id => "formulario_editar_evaluaciones"})do  
+
+  = hidden_field :sitio_web, :id, {:value => @sitio_web.id}
+  = hidden_field :eval, :can, {:value => @sitio_web.evaluacion.size, :autocomplete => "off"}
+  
+  %table{:id => "tabla_evaluacion", :class => "evaluacion"}
+    %thead
+      %tr
+        %td
+          Nombre (*)
+        %td
+          Tipo (*)
+        %td
+          Porcentaje (*)
+        %td
+          Inicio
+        %td
+          Fin
+    %tbody{:id => "tbody_evaluacion"}
+      -if @sitio_web.evaluacion.size > 0
+        -@sitio_web.evaluacion.each_with_index do |evaluacion, i|
+          %tr{:id => "tr_evaluacion_"+(i+1).to_s, :class => "fila_evaluacion"}
+            %td
+              = hidden_field :evaluacion, "id_"+(i+1).to_s, {:value => evaluacion.id}
+              = text_field :evaluacion, "nombre_"+(i+1).to_s, {:placeholder => "Parcial 1", :value => evaluacion.nombre, :class => "evaluacion_nombre"}
+
+            %td
+              = select(:evaluacion, "tipo_"+(i+1).to_s, @tipos, {:prompt => "Seleccione", :selected => evaluacion.tipo}, {:class => "evaluacion_tipo"})
+
+            %td
+              = text_field :evaluacion, "valor_"+(i+1).to_s, {:placeholder => "30", :value => evaluacion.valor.to_i.to_s, :class => "evaluacion_valor"}
+
+            %td
+              -fecha_inicio = evaluacion.fecha_inicio.strftime("%d/%m/%Y") if evaluacion.fecha_inicio
+              = text_field :evaluacion, "fecha_inicio_"+(i+1).to_s, {:placeholder => Time.now.strftime("%d/%m/%Y"), :class => "evaluacion_fecha", :value => fecha_inicio, :onchange => "cambiar_fecha_fin(this.id)"}
+
+            %td
+              -fecha_fin = evaluacion.fecha_fin.strftime("%d/%m/%Y") if evaluacion.fecha_fin
+              = text_field :evaluacion, "fecha_fin_"+(i+1).to_s, {:placeholder => Time.now.strftime("%d/%m/%Y"), :class => "evaluacion_fecha", :value => fecha_fin}
+
+            %td
+              %a{:href => "#", :id => "eliminar_evaluacion_"+(i+1).to_s, :title => "Eliminar evaluación", :onclick => "eliminar_evaluacion_tabla(this.id);return false;"}
+                %i{:class => "icon-trash"}
+
+      -else
+        %tr{:id => "tr_evaluacion_1", :class => "fila_evaluacion"}
+          %td
+            = hidden_field :evaluacion, :id_1, {:value => "-1"}
+            = text_field :evaluacion, :nombre_1, {:placeholder => "Parcial 1", :class => "evaluacion_nombre"}
+
+          %td
+            = select(:evaluacion, :tipo_1, @tipos, {:prompt => "Seleccione"},{:class => "evaluacion_tipo"})
+
+
+          %td
+            = text_field :evaluacion, :valor_1, {:placeholder => "30", :class => "evaluacion_valor"}
+
+          %td
+            = text_field :evaluacion, :fecha_inicio_1, {:placeholder => Time.now.strftime("%d/%m/%Y"), :class => "evaluacion_fecha", :onchange => "cambiar_fecha_fin(this.id)"}
+
+          %td
+            = text_field :evaluacion, :fecha_fin_1, {:placeholder => Time.now.strftime("%d/%m/%Y"), :class => "evaluacion_fecha"}
+
+          %td
+            %a{:href => "#", :id => "eliminar_evaluacion_1", :title => "Eliminar evaluación", :onclick => "eliminar_evaluacion_tabla(this.id);return false;"}
+              %i{:class => "icon-trash"}
+
+        :javascript
+          $('#eval_can').val("1");
+  %br
+  %p{:style => "margin:0px auto;text-align:center"}
+    = submit_tag "Guardar", :class=>"btn btn-primary", :id => "editar_evaluacion_submit"
+    %span{:id => 'ajax-loader', :style => "display:none"}
+      =image_tag "ajax-loader.gif"
+
+%p
+  %ul
+    %strong Nota:
+    %li Los valores deben ser numéricos.
+    %li Las fechas deben estar en el formato preestablecido dd/mm/aaaa.
+    %li Las evaluaciones se agregarán automáticamente al calendario de la planificación.
+

@@ -1,0 +1,32 @@
+%h3{:style => "padding-bottom:10px"}
+  Semestres anteriores
+
+
+-if @sitio_web.asignatura.tiene_varios_sitios_web
+  %table{:class => "tablaAsignatura"}
+    %thead
+      %tr{:style => "height:50px;vertical-align:bottom;"}
+        %td
+          %strong
+            %h4
+              Semestre
+        %td
+          %strong 
+            Última actualización
+        %td{:style => "text-align:left;"}
+          %strong
+            Docente creador
+
+    %tbody
+      -SitioWeb.where(:asignatura_id => @sitio_web.asignatura.id).each do |sitio_web|
+        %tr
+          %td
+            =link_to "#{sitio_web.periodo}", :controller => "informacion_general", :action => "index", :asignatura_nombre => "#{sitio_web.nombre_url}", :semestre => "#{sitio_web.periodo}"
+
+          %td 
+            =sitio_web.updated_at.strftime("%d/%m/%Y")
+          %td{:style => "text-align:left;"}
+            = Usuario.where(:id => sitio_web.usuario_id).first.nombre_y_apellido
+
+-else
+  No existen sitios web para semestres anteriores.

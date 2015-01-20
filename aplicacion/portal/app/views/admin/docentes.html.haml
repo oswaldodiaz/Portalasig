@@ -1,0 +1,78 @@
+:javascript
+	$(document).ready(function() {
+		$("#docente_datos").autocomplete({
+			source: #{@docente_datos}
+		});
+
+		$("#eliminar_docentes_button").click(function(){
+			if(confirm('¿Está seguro de que desea eliminar a los docentes seleccionados?')){
+				$("#eliminar_docentes_form").submit();
+			}
+			
+			return false;
+		});
+
+		$("#categoria_categoria").change(function(){
+			if($("#categoria_categoria").val() != ""){
+				window.location = $('#orden').attr('href')+"?orden="+$("#categoria_categoria").val();
+			}
+		});
+
+		$(".editar").click(function(){
+			window.location = $("#editar").attr("href")+"/"+$(this).attr("id");
+		});
+	});
+
+%p
+	#opciones_panel_central{:style => "padding-bottom:10px;"}
+		.input-append{:style => "float:left;width:50%"}
+			-if @categorias
+				Ordenar por:
+				= select(:categoria, :categoria, @categorias, { :prompt => "Seleccione"}, {:style => "width:100px;"})
+				=link_to "", {:action => "docentes", :controller => "admin"}, :style => "display:none", :id => "orden"			
+			
+			=link_to '<i class="icon-plus"></i>'.html_safe, {:action => "agregar_docente", :controller => "admin"}, :class => "btn btn-primary", :id => "agregar_docente_submit", :title => "Agregar un docente"
+
+			
+			%a{:href => "#", :class=>"btn btn-primary", :id => "eliminar_docentes_button", :style => "display:none", :title => "Eliminar docentes seleccionados"}
+				%i{:class => "icon-trash"}
+
+		.input-append{:style => "float:right;width:300px;"}
+			=link_to '<i class="icon-search"></i>'.html_safe, {:action => "docente", :controller => "admin"}, :class => "btn btn-primary", :id => "buscar_docente_submit", :title => "Buscar un docente", :style => "float: right"
+			= text_field :docente, :datos, {:placeholder => "Cédula - Nombre", :class => "span9 search-query", :style => "float: right;width:230px"}
+			#imagen_de_carga{:style => "display:none;float:right;"}
+				=image_tag "ajax-loader.gif"
+
+%br
+#resultado_panel_central{:style => "width:100%"}
+	-if @usuarios
+		=form_tag({:controller => "admin", :action => "eliminar_docentes"}, {:id => "eliminar_docentes_form"})do  
+			=hidden_field :docentes, :cantidad, :value => @usuarios.size
+			%table{:class => "tabla table-striped table-bordered table-editable"}
+				%thead
+					%tr
+						%td 
+							=check_box_tag 'docentes_check_box', 'todos'
+						%td Cédula
+						%td Nombre
+						%td Apellido
+						%td Correo
+				%tbody
+					-@usuarios.each_with_index do |usuario, index|
+						%tr
+							%td
+								=check_box_tag 'docente_check_box_'+(index+1).to_s, usuario.id.to_s
+
+							=link_to "", {:action => "editar_docente", :controller => "admin"}, :style => "display:none", :id => "editar"
+							%td{:class => "editar", :id => usuario.id, :title => "Editar",:style => "text-align:center"}
+								=usuario.cedula
+							%td{:class => "editar", :id => usuario.id, :title => "Editar",:style => "text-align:left"}
+								=usuario.nombre
+							%td{:class => "editar", :id => usuario.id, :title => "Editar",:style => "text-align:left"}
+								=usuario.apellido
+							%td{:class => "editar", :id => usuario.id, :title => "Editar",:style => "text-align:left"}
+								=usuario.correo
+
+	-else
+		%p
+			No existe ningún docente en el sistema todavía.

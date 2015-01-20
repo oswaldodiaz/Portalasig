@@ -1,0 +1,60 @@
+-if @es_del_grupo_docente
+  %h3{:style => "padding-bottom:10px"}
+    Enviar Correo Electrónico
+  
+  
+  =form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "correo", :action => "enviar"}, {:class => "form-horizontal", :id => "formulario_correo_enviar"})do  
+    .row-fluid{:style => "padding-bottom:20px;padding-top:20px"}
+      .span{:style => "text-align:left;width:100px"}
+        -if @secciones_sitio_web
+          %h4
+            Secciones
+          -@secciones_sitio_web.each_with_index do |seccion_sitio_web, i|
+            %p
+              =check_box_tag 'seccion_check_box_todos_'+(i+1).to_s, seccion_sitio_web.correos, false, {:class => "check_box_correos"}
+              =seccion_sitio_web.seccion.nombre
+
+      .span{:style => "text-align:left;width:240px"}
+        -if @docentes
+          %h4
+            Docentes  
+          -@docentes.each_with_index do |usuario, i|
+            %p
+              =check_box_tag 'docente_check_box_todos_'+(i+1).to_s, usuario.correo, false, {:class => "check_box_correos"}
+              =usuario.nombre_y_apellido
+      .span{:style => "text-align:left;width:240px"}
+        -if @preparadores
+          %h4 
+            Preparadores  
+          -@preparadores.each_with_index do |usuario, i|
+            %p
+              =check_box_tag 'preparador_check_box_todos_'+(i+1).to_s, usuario.correo, false, {:class => "check_box_correos"}
+              =usuario.nombre_y_apellido
+
+    %table
+      %tbody{:id => "tbody_crear_correo"}
+        %tr{:id => "para_"}
+          %td{:style => "padding-bottom:5px;"}
+            %strong
+              Para:
+        %tr{:style => "padding-bottom:5px;"}
+          %td{:style => "padding-bottom:5px;"}
+            =text_area :correo, :correos, {:style => "width: 500px;"}
+        %tr{:id => "asunto_"}
+          %td{:style => "padding-bottom:5px;"}
+            %strong
+              Asunto:
+        %tr
+          %td
+            =text_field :correo, :asunto, {:style => "width: 500px;"}
+        %tr{:id => "descripcion_"}
+          %td{:style => "padding-bottom:5px;"}
+            %strong
+              Correo:
+        %tr
+          %td{:style => "padding-bottom:10px;"}
+            = text_area :correo, :texto, {:class => "text_area_long", :style => "width: 500px;height: 450px;"}
+
+    = submit_tag "Enviar", :class=>"btn btn-primary", :id => "procesar_enviar_correo_submit"
+    %span{:id => 'ajax-loader', :style => "display:none"}
+      =image_tag "ajax-loader.gif"        

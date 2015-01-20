@@ -1,0 +1,23 @@
+textarea {
+  resize: none;
+  overflow: auto;
+  height: 30px;
+}
+
+.tabla-vista-datos{
+
+}
+
+.tabla-vista-datos tr{
+  padding-bottom:10px;
+}
+
+.tabla-vista-datos td,
+.tabla-vista-datos th{
+  padding-right: 10px;
+}
+
+
+.qtip-class{
+  background-color: #0000FF;
+}

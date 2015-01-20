@@ -1,0 +1,129 @@
+:javascript
+	$(document).ready(function() {
+		$("#asignatura_datos").autocomplete({
+			source: #{@asignatura_datos}
+		});
+
+		$("#eliminar_asignaturas_button").click(function(){
+			if(confirm('¿Está seguro de que desea eliminar las asignaturas seleccionadas?')){
+				$.each($(".li_carrera"), function(){
+					if( $(this).parent().hasClass( "active" ).toString() == "true"){
+						$("#formulario_eliminar_asignaturas_"+ $(this).attr('id').split("_")[2] ).submit();
+					}
+				});
+			}
+			
+			return false;
+		});
+		
+		$("#categoria_categoria").change(function(){
+			if($("#categoria_categoria").val() != ""){
+				window.location = $('#orden').attr('href')+"?orden="+$("#categoria_categoria").val();
+			}
+		});
+
+
+		$(".li_carrera").click(function(){
+			i = 1;
+			$.each($(".li_carrera"), function(){
+				$(this).parent().removeClass();
+				$("#div_carrera_"+i).hide();
+				i++;
+			})
+
+			$( "#div_carrera_" + $(this).attr('id').split("_")[2] ).show();
+			$(this).parent().addClass('active');
+
+			return false;
+		});
+		
+		$(".editar").click(function(){
+			window.location = $("#editar").attr("href")+"/"+$(this).attr("id");
+		});
+	});
+
+
+%p
+	#opciones_panel_central{:style => "padding-bottom:10px;"}
+		.input-append{:style => "float:left;width:50%"}
+			-if @categorias
+				Ordenar por:
+				= select(:categoria, :categoria, @categorias, { :prompt => "Seleccione"}, {:style => "width:100px;"})
+				=link_to "", {:action => "asignaturas", :controller => "admin"}, :style => "display:none", :id => "orden"
+
+			=link_to '<i class="icon-plus"></i>'.html_safe, {:action => "agregar_asignatura", :controller => "admin"}, :class => "btn btn-primary", :id => "agregar_asignatura_submit", :title => "Agregar una asignatura"
+
+			%a{:href => "#", :class=>"btn btn-primary", :id => "eliminar_asignaturas_button", :style => "display:none", :title => "Eliminar las asignaturas seleccionados"}
+				%i{:class => "icon-trash"}
+
+
+
+		.input-append{:style => "float:right;"}
+			=link_to '<i class="icon-search"></i>'.html_safe, {:action => "asignatura", :controller => "admin"}, :class => "btn btn-primary", :id => "buscar_asignatura_submit", :title => "Buscar una asignatura", :style => "float: right;margin-left:5px"
+		  
+			= text_field :asignatura, :datos, {:placeholder => "Código - Nombre", :class => "span8 search-query", :style => "float: right;margin-left:5px,width:150px"}
+
+			#imagen_de_carga{:style => "display:none; float: right;"}
+				=image_tag "ajax-loader.gif"
+
+
+%br
+
+#resultado_panel_central{:style => "width:100%"}
+	-if @carreras
+		%ul{:class=>"nav nav-pills"}
+			-@carreras.each_with_index do |carrera, i|
+				-clase = ""
+				-if i == 0
+					-clase = "active"
+				%li{:class=>"#{clase}"}
+					%a{:href=>"#", :id => "li_carrera_"+(i+1).to_s, :class => "li_carrera"}
+						=carrera
+
+		-@carreras.each_with_index do |carrera, i|
+			-style = ""
+			-if i > 0
+				-style = "display:none"
+			%div{:id => "div_carrera_"+(i+1).to_s, :class => "div_carrera", :style => "#{style}"}
+
+				-asignaturas = Asignatura.order(@orden).where(:id => AsignaturaCarrera.where(:carrera_id => Carrera.where(:nombre => carrera).collect{|x| x.id}).collect{|x| x.asignatura_id})
+				-if asignaturas.size > 0
+
+					=form_tag({:controller => "admin", :action => "eliminar_asignaturas", :id => (i+1).to_s}, {:id => "formulario_eliminar_asignaturas_"+(i+1).to_s, :class => "formulario_eliminar_asignaturas_administrador"})do  
+						=hidden_field :asignaturas, "cantidad_"+(i+1).to_s, :value => asignaturas.size
+						%table{:class => "tabla table-striped table-bordered table-editable"}
+							%thead
+								%tr
+									%td 
+										=check_box_tag 'asignaturas_check_box_todos_'+(i+1).to_s, 'todos', false, {:class => "check_box_asignaturas"}
+									%td Código
+									%td{:style => "width:380px;"}
+										Nombre
+									%td Créditos
+									%td{:style => "width:150px;"}
+										Tipo
+							%tbody
+								-asignaturas.each_with_index do |asignatura, index|
+									%tr
+										%td
+											=check_box_tag 'asignatura_check_box_'+(i+1).to_s+'_'+(index+1).to_s, asignatura.id.to_s, false, {:class => "check_box_asignaturas"}
+										
+										=link_to "", {:action => "editar_asignatura", :controller => "admin"}, :style => "display:none", :id => "editar"
+										%td{:class => "editar", :id => asignatura.id, :title => "Editar",:style => "text-align:center"}
+											=asignatura.codigo
+										
+										%td{:class => "editar", :id => asignatura.id, :title => "Editar",:style => "text-align:center", :style => "width:380px;"}
+											=asignatura.nombre
+										
+										%td{:class => "editar", :id => asignatura.id, :title => "Editar",:style => "text-align:center"}
+											=asignatura.unidades_credito
+
+										%td{:class => "editar", :id => asignatura.id, :title => "Editar",:style => "text-align:center"}
+											=asignatura.tipo
+
+				-else
+					%p
+						No existe ninguna asignatura para esta licenciatura.
+	-else
+		%p
+			No existe ninguna carrera en el sistema.

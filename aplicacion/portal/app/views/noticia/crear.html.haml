@@ -1,0 +1,34 @@
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %h3
+      Nueva Noticia
+
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "noticia", action: "index"}, {:class => "btn"}
+
+%p
+  Los campos con (*) son obligatorios.
+
+=link_to "", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "noticia", action: "index"}, :style => "display:none", :id => "url"
+
+-if @es_del_grupo_docente
+  =form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "noticia", :action => "procesar_crear"}, {:class => "form-horizontal", :id => "formulario_noticia"})do 
+
+    = hidden_field :a, :a, {:id => "url", :value => "/"+@sitio_web.nombre_url+"/"+@sitio_web.periodo+'/noticia/index'}
+    .control-group
+      %label{:class => "control-label"}
+        %strong Título (*):
+      .controls
+        = text_area :noticia, :titulo, {:class => "input-large", :placeholder => "Título", :style => "width:300px;heigth:60px;"}
+    .control-group
+      %label{:class => "control-label"}
+        %strong Descripción (*):
+      .controls
+        = text_area :noticia, :texto, {:class => "input-large", :placeholder => "Noticia", :style => "width:300px;heigth:60px;"}
+
+    .control-group
+      .controls
+        = submit_tag "Guardar", :class=>"btn btn-primary", :id => "procesar_crear_noticia_submit"
+        %span{:id => 'ajax-loader', :style => "display:none"}
+          =image_tag "ajax-loader.gif"
+      

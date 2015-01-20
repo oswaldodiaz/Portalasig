@@ -1,0 +1,129 @@
+%h3{:style => "padding-bottom:10px"}
+  Bienvenido al sitio web de la asignatura
+
+%div{:style => "text-align:justify"}
+  .row-fluid{:style => "margin-top:10px;"}
+    .span8
+      %p
+        Este portal web fue creado con la finalidad de realizar un intercambio virtual de recursos entre el grupo docente y los estudiantes cursantes de la asignatura:
+        %strong
+          =@sitio_web.asignatura.nombre
+        de la Facultad de Ciencias de la Universidad Central de Venezuela.
+
+      %p
+        Como parte del grupo docente, puedes administrar cada una de las secciones del menú ubicado en el panel izquierdo. A continuación se dará una breve descripción de cada sección para que puedas empezar a utilizarlo sin ningún problema.
+    .span4
+      =image_tag "ciencias.jpeg"
+
+%div{:style => "text-align:justify"}
+  .row-fluid{:style => "margin-top:10px;"}
+    .span4
+      =image_tag "informacion_general.jpg"
+    .span8
+      %ul
+        %strong Secciones
+        %li
+          %strong Información General:
+          En esta sección se introduce la información más básica de la asignatura: Código, Nombre, Créditos, Tipo, Requisitos, Objetivos y la Bibliografía.
+
+        %li
+          %strong Contenido Temático:
+          Aquí se introducen todos los temas que forman parte del curso, clasificándolos por título y descripción.
+
+%div{:style => "text-align:justify"}
+  .row-fluid{:style => "margin-top:10px;"}
+    .span8
+      %ul
+        %li
+          %strong Grupo Docente:
+          Sabemos que el trabajo colaborativo aumenta el nivel de contenido de un sitio web. Esta sección esta creada para darle la permisología a los demás integrantes del grupo docente para que editen el sitio web junto a ti.
+
+        %li
+          %strong Horarios:
+          Una vez que las secciones fueron definidas en el grupo docente, es hora de ingresar cada uno de los horarios.
+
+        %li
+          %strong Estudiantes:
+          Es hora de invitar a los estudiantes a participar en el sitio web y aumentar el enriquecimiento de información del sitio. En esta sección podrás administrar los estudiantes en cada sección. Para hacerte el trabajo más sencillo se ha creado un ícono (
+          %i{:class => "icon-arrow-up"})
+          que te permitirá subir la lista de estudiantes que sueles descargar del sistema de Control de Estudios (CONEST).
+
+    .span4
+      =image_tag "horario.jpg"
+
+%div{:style => "text-align:justify"}
+  .row-fluid{:style => "margin-top:10px;"}
+    .span4
+      =image_tag "entregas.jpg"
+    .span8
+      %ul
+        %li
+          %strong Evaluación:
+          Ingresa las evaluaciones que se harán a lo largo del semestre. Si ya tienes las fechas de cada evaluación, al agregarlas se añadirán automáticamente a la planificación. Mientras más especificas sean las evaluaciones, mejor podrán ver las calificaciones los estudiantes.
+
+        %li
+          %strong Entrega:
+          Te presentamos una sección destinada a entregas de asignaciones (Tareas, Proyectos, Laboratorios, entre otros), aquí sólo debes colocar el nombre de la asignación y la fecha de entrega. Luego de finalizada la entrega, podrás descargarte todas las tareas que los estudiantes hayan entregado con un simple click en el ícono
+          =image_tag "adjunto.png", :style => "height:15px"
+          \. Al igual que con las evaluaciones, las entregas se colocarán automáticamente en la planificación.
+
+%div{:style => "text-align:justify"}
+  .row-fluid{:style => "margin-top:10px;"}
+    .span8
+      %ul
+        %li
+          %strong Planificación:
+          La planificación debe ser visual y es por eso que viene presentada en un simple calendario, donde se podrán ver todas los eventos que se han agregado en el sitio. Podrás agregar más eventos, modificar los actuales o hasta eliminarlos. Si algún evento ha cambiado de fecha simplemente haz click sobre él y arrástralo hasta el día correspondiente (Si es en el mismo mes).
+
+        %li
+          %strong Calificación:
+          Hazle saber a los estudiantes su rendimiento en el curso. Simplemente debes buscar la sección y la evaluación a calificar, seleccionar el botón 
+          %i{:class => "icon-pencil"}
+          introducir las calificaciones y selecciona "Guardar". El estudiante sólo visualizará sus calificaciones y será avisado automáticamente cuando sean actualizadas.
+    .span4
+      =image_tag "evaluacion.jpg"
+
+
+
+%div{:style => "text-align:justify"}
+  .row-fluid{:style => "margin-top:10px;"}
+    .span4
+      =image_tag "foros.jpg"
+    .span8
+      %ul
+        %li
+          %strong Noticias:
+          Informa a tus estudiantes de lo que sucede a través de esta sección y expande la información, compartiéndola en las redes sociales Facebook, Twitter o Google+.
+
+        %li
+          %strong Foros:
+          Para que aumente el enriquecimiento de información, se presenta esta sección donde los estudiantes podrán intercambiar información entre ellos y con el grupo docente, disminuyendo el tiempo de respuesta a las dudas comunes del curso.
+
+        %li
+          %strong Descargas:
+          Carga y clasifica los recursos que deseas subir al sistema para que los estudiantes accedan a estos.
+
+%div{:style => "text-align:justify"}
+  .row-fluid{:style => "margin-top:10px;"}
+    .span8
+      %ul
+        %li
+          %strong Enviar Correo:
+          Conocemos lo tedioso que puede ser conseguir los correos de cada uno de los estudiantes a la hora de querer comunicarse con ellos. Se presenta una sección dedicada exclusivamente a enviar correos, donde podrás agregar los correos de los estudiantes, un asunto y tu texto editable para que a través del correo del sitio web se envíen.
+
+        %li
+          %strong Semestres Anteriores:
+          Este sitio web esta construido con la idea de dejar registro de las actividades que se realizaron en el semestre 
+          =@sitio_web.periodo
+          \. Una vez que el semestre finalice ingresa al portal y crea una nueva instancia de este sitio web así como creaste este. No te preocupes, no tendrás que volver a insertar todo el contenido, todos tus datos básicos (Información general, Objetivos, Bibliografía, Contenido Temático, Grupo Docente y Horarios) se copiarán al nuevo sitio. Esta sección es la vía para acceder a los semestres anteriores.
+    .span4
+      =image_tag "correo.jpg"
+
+%div{:style => "text-align:justify"}
+  .row-fluid{:style => "margin-top:10px;"}
+    .span8
+      %ul
+        %li
+          %strong Inicio:
+          Retorna al portal en cualquier momento.
+

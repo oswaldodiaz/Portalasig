@@ -1,0 +1,67 @@
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %h3
+      Editar Bibliografía
+      %a{:id => "agregar_bibliografia_button", :title => "Agregar bibliografía", :style => "padding-left:20px;"}
+        %i{:class => "icon-plus"}
+
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "informacion_general", action: "index"}, {:class => "btn"}
+
+=link_to "", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "informacion_general", action: "index"}, {:id => "url", :style => "display:none"}
+
+=form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "bibliografia", action: "procesar_editar"}, {id: "formulario_editar_bibliografia", :class => "form-horizontal"}) do
+
+  = hidden_field :a, :a, {:id => "url", :value => "/"+@sitio_web.nombre_url+"/"+@sitio_web.periodo+'/informacion_general/index'}
+
+  = hidden_field :bibliography, :cantidad, {:value => ((@sitio_web.bibliography.size > 0)? @sitio_web.bibliography.size : 1 ), :autocomplete => "off"}
+  %table
+    %tbody{:id => "tbody_agregar_bibliografia"}
+      -if @sitio_web.bibliography.size > 0
+        -@sitio_web.bibliography.order("autores").each_with_index do |bibliography, i|
+          %tr{:id => (i+1).to_s, :class => "bibliografia"}
+            %td
+              %strong
+                Bibliografía 
+                = precede '#' do
+                  =i+1
+          %tr{:id => "autores_"+(i+1).to_s}
+            %td{:style => "padding-bottom:5px;padding-right:10px;"}
+              = text_field :b, :b, {:id => "bibliography_autores_"+(i+1).to_s, :name => "bibliography[autores_"+(i+1).to_s+"]", :value => bibliography.autores, :class => "text_area_long", :style => "width: 500px;", :placeholder => "Autores"}
+            %td{:style => "vertical-align:top;padding-left:10px;"}
+              %a{:href => "#", :id => "eliminar_bibliography_"+(i+1).to_s, :onclick => "eliminar_bibliography_tabla(this.id)"}
+                %i{:class => "icon-trash"}
+          
+          %tr{:id => "titulo_"+(i+1).to_s}
+            %td{:style => "padding-bottom:5px;"}
+              = text_area :b, :b, {:id => "bibliography_titulo_"+(i+1).to_s, :name => "bibliography[titulo_"+(i+1).to_s+"]", :value => bibliography.titulo, :class => "text_area_long", :style => "width: 500px;", :placeholder => "Título"}
+          
+          %tr{:id => "descripcion_"+(i+1).to_s}
+            %td{:style => "padding-bottom:15px;"}
+              = text_area :b, :b, {:id => "bibliography_descripcion_"+(i+1).to_s, :name => "bibliography[descripcion_"+(i+1).to_s+"]", :value => bibliography.descripcion, :class => "text_area_long", :style => "width: 500px;", :placeholder => "Descripción"}
+
+
+      -else
+        %tr{:id => "1", :class => "bibliografia"}
+          %td
+            %strong
+              Bibliografía #1
+        %tr{:id => "autores_1"}
+          %td{:style => "padding-bottom:5px;padding-right:10px;"}
+            = text_field :b, :b, {:id => "bibliography_autores_1", :name => "bibliography[autores_1]", :class => "text_area_long", :style => "width: 500px;", :placeholder => "Autores"}
+          %td{:style => "vertical-align:top;padding-left:10px;"}
+            %a{:href => "#", :id => "eliminar_bibliography_1", :onclick => "eliminar_bibliography_tabla(this.id);return false;"}
+              %i{:class => "icon-trash"}
+        
+        %tr{:id => "titulo_1"}
+          %td{:style => "padding-bottom:5px;"}
+            = text_area :b, :b, {:id => "bibliography_titulo_1", :name => "bibliography[titulo_1]", :class => "text_area_long", :style => "width: 500px;", :placeholder => "Título"}
+        
+        %tr{:id => "descripcion_1"}
+          %td{:style => "padding-bottom:15px;"}
+            = text_area :b, :b, {:id => "bibliography_descripcion_1", :name => "bibliography[descripcion_1]", :class => "text_area_long", :style => "width: 500px;", :placeholder => "Descripción"}
+
+  %p{:style => "margin:0px auto;text-align:center"}
+    = submit_tag "Guardar", :class=>"btn btn-primary", :id => "editar_bibliografia_submit"
+    %span{:id => 'ajax-loader', :style => "display:none"}
+      =image_tag "ajax-loader.gif"

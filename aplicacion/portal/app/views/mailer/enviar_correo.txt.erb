@@ -1,0 +1,29 @@
+Portal de Sitios web de asignaturas de la Facultad de Ciencias de la Universidad Central de Venezuela
+
+<% if @usuario %>
+	<%= @usuario.nombre_y_apellido %>
+<% end %>
+
+<% if @titulo %>
+	<%= @titulo %>
+<% end %>
+
+<% if @mensaje %>
+	<%= @mensaje %>
+<% end %>
+
+<% if @url %>
+	<%= link_to @url_nombre root_url+@url %>
+<% end %>
+
+<% if @mensaje_continuacion %>
+	<%= @mensaje_continuacion %>
+<% end %>
+
+<% if @despedida %>
+	<%= @despedida %>
+<% end %>
+
+:: Universidad Central de Venezuela ::
+:: Facultad de Ciencias :: 
+Paseo Los Ilustres Urb. Valle Abajo. Código Postal 1040. Caracas-Venezuela 

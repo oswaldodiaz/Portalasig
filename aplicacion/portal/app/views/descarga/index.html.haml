@@ -1,0 +1,66 @@
+:javascript
+  $(document).ready(function() {
+    $( "#tabs" ).tabs();
+
+    $(".li_descargas").click(function(){
+      
+      $.each($(".li_descargas"), function(){
+        i = $(this).attr('id').split("_")[2];
+        $(this).parent().removeClass();
+        $("#div_descargas_"+i).hide();
+      })
+
+      $( "#div_descargas_" + $(this).attr('id').split("_")[2] ).show();
+      $(this).parent().addClass('active');
+    });
+  });
+
+%h3{:style => "padding-bottom:10px"}
+  Descargas
+  -if @es_del_grupo_docente
+    =link_to '<i class="icon-plus"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "descarga", :action => "agregar"}, :id => "agregar_descarga_submit", :title => "Agregar un Archivo", :style => "margin-left:20px"
+
+
+
+-if @tipos
+  -if @sitio_web.archivo.size > 0
+    
+    -primero = true
+    %ul{:class =>"nav nav-tabs"}
+      -@tipos.each_with_index do |tipo, index|
+        -if Archivo.where(:sitio_web_id => @sitio_web.id, :tipo => tipo).size > 0
+          -clase = ""
+          -if primero
+            -primero = false
+            -clase = "active"
+          %li{:class=>clase}
+            %a{:href=>"#", :class => "li_descargas", :id => "li_descargas_"+tipo.to_s}
+              =tipo
+
+    -primero = true
+    -@tipos.each_with_index do |tipo, index|
+      -if Archivo.where(:sitio_web_id => @sitio_web.id, :tipo => tipo).size > 0
+        %div{:id => "div_descargas_"+tipo, :style => "display:none;margin-left:10px"}
+          -descargas = Archivo.order("created_at Desc").where(:sitio_web_id => @sitio_web.id, :tipo => tipo)
+          -if descargas.size > 0
+            %ul
+              -descargas.each_with_index do |descarga, desc_index|
+                %li{:style => "list-style-type: none;padding-bottom:15px; color:#999999"}
+                  =link_to image_tag(descarga.imagen) + " " + descarga.nombre, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "descarga", :action => "descargar_archivo", :id =>descarga.id }, :id => "descargar_evaluaciones_button", :title => "Descargar Archivo", :style =>"height: 20px;"
+
+                
+                  -if descarga.tamano
+                    =descarga.tamano_string
+
+                  -if @es_del_grupo_docente
+                    =link_to '<i class="icon-trash"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "descarga", :action => "eliminar", :id => descarga.id}, :id => "eliminar_descarga", :title => "Eliminar Descarga", :style => "padding-left:20px", :onclick => "if(!confirm('¿Está seguro que quiere eliminar la descarga?')) return false;"
+          -else
+            No existen archivos para descargar en esta sección
+
+        -if primero
+          -primero = false
+          :javascript
+            $('#div_descargas_'+"#{tipo}").show();
+
+  -else
+    No existen descargas para este sitio web todavía.

@@ -1,0 +1,71 @@
+:javascript
+  $(document).ready(function() {
+    $(".button_eliminar_estudiante_seccion_sitio_web").click(function(){
+      if(confirm('¿Está seguro de que desea eliminar a los estudiantes seleccionados?')){
+        seccion_sitio_web_id = $(this).attr('id').split("_");
+        $("#formulario_eliminar_estudiante_seccion_sitio_web_"+seccion_sitio_web_id[seccion_sitio_web_id.length-1]).submit();
+      }
+      return false;
+    });    
+  });
+
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %h3
+      Estudiantes
+
+-if @secciones_sitio_web.size > 0
+  -@secciones_sitio_web.each do |seccion_sitio_web|
+    %h4{:style => "padding-bottom:5px"}
+      Sección
+      =seccion_sitio_web.seccion.nombre
+
+      -if @es_del_grupo_docente
+
+        =link_to '<i class="icon-plus"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "estudiantes", :action => "agregar_estudiante_a_seccion", :id => seccion_sitio_web.id}, :id => "agregar_estudiante_submit", :title => "Agregar estudiantes", :style => "margin-left:10px;"
+        
+        %a{:href => "#", :class=>"button_eliminar_estudiante_seccion_sitio_web", :id => "button_eliminar_estudiantes_seccion_sitio_web_#{seccion_sitio_web.id.to_s}", :style => "display:none;margin-left:10px;", :title => "Eliminar estudiantes seleccionados"}
+          %i{:class => "icon-trash"}
+
+    
+
+    -if seccion_sitio_web.estudiantes.size > 0
+
+      =form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "estudiantes", :action => "eliminar_estudiante_seccion_sitio_web", :id => seccion_sitio_web.id.to_s}, {:class => "form-horizontal", :id => "formulario_eliminar_estudiante_seccion_sitio_web_#{seccion_sitio_web.id.to_s}"})do  
+        =hidden_field :seccion_sitio_web, :id, :value => seccion_sitio_web.id
+        =hidden_field :seccion_sitio_web, "cantidad_#{seccion_sitio_web.id.to_s}", :value => seccion_sitio_web.estudiantes.size
+ 
+        %table{:class => "tabla table-striped table-bordered table-editable"}
+          %thead
+            %tr
+              -if @es_del_grupo_docente
+                %td{:id => "check_box_todos_#{seccion_sitio_web.id.to_s}"}
+                  =check_box_tag 'check_box_estudiante_seccion_sitio_web_'+seccion_sitio_web.id.to_s, 'todos', false, :class => "check_box_estudiantes"
+              %td Cédula
+              %td Estudiante
+              %td Correo
+          %tbody
+            -seccion_sitio_web.estudiantes.each_with_index do |usuario, index|
+              %tr
+                -if @es_del_grupo_docente
+                  %td{:id => "check_box_elementos_#{seccion_sitio_web.id.to_s}"}
+                    =check_box_tag 'check_box_estudiante_seccion_'+seccion_sitio_web.id.to_s+'_'+(index+1).to_s, usuario.id.to_s, false, :class => "check_box_estudiantes"
+                %td{:style => "text-align:center"}
+                  =usuario.cedula
+                %td
+
+                  ="#{usuario.nombre_y_apellido}"
+                %td
+                  =usuario.correo
+    -else
+      %p
+        No se han agregado estudiantes a esta sección.
+    
+    %hr{:style => "margin: 15px 0px 15px 0px; display: block; height: 1px;border: 0; border-top: 1px solid #bbb;"}
+
+
+-else
+  %p
+    Debe agregar al menos una sección para poder agregar estudiantes.
+
+

@@ -1,0 +1,18 @@
+.horario td{
+  padding: 0px 10px 5px 0px;
+}
+
+.horario thead td{
+  font-weight:bold;
+}
+
+.horario input{
+  width:40px;
+}
+
+.horario select {
+  width: 98px;
+  line-height: 1;
+  border-radius: 0;
+  height: 34px;  
+}

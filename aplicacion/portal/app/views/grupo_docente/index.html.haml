@@ -1,0 +1,100 @@
+-if @docentes.size > 0 || @preparadores.size > 0
+  %h3{:style => "padding-bottom:10px"}
+    Grupo Docente
+
+  -if @docentes.size > 0  || @es_del_grupo_docente
+    %h4
+      %strong
+        -if @docentes.size == 1
+          Docente
+        -else
+          Docentes
+        -if @es_del_grupo_docente
+          -if @sitio_web.docente_sitio_web.size > 0
+            =link_to '<i class="icon-pencil"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "grupo_docente", :action => "editar_docentes"}, :id => "editar_docente_grupo_docente_submit", :title => "Editar Docentes", :style => "padding-left:20px"
+          -else
+            =link_to '<i class="icon-plus"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "grupo_docente", :action => "editar_docentes"}, :id => "editar_docente_grupo_docente_submit", :title => "Agregar Docentes", :style => "padding-left:20px"
+    
+    -if @docentes.size > 0
+      %table{:class => "tabla table-striped table-bordered"}
+        %thead
+          %tr
+            %td Sección
+            %td Nombre
+            %td Correo
+            %td Tipo
+            -if @es_docente && @docentes.size > 1
+              %td Eliminar
+        %tbody
+          -@docentes.each_with_index do |docente_sitio_web, index|
+            %tr
+              %td{:style => "text-align:center"}
+                -if docente_sitio_web.seccion
+                  =docente_sitio_web.seccion_nombre
+              %td
+                =docente_sitio_web.docente.usuario.nombre_y_apellido
+              %td
+                =docente_sitio_web.correo
+              %td
+                -if docente_sitio_web.tipo
+                  =docente_sitio_web.tipo
+              -if @es_docente && @docentes.size > 1
+                %td
+                  =link_to '<i class="icon-trash"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "grupo_docente", :action => "eliminar_docente", :id => docente_sitio_web.id}, :id => "eliminar_docente_grupo_docente_submit", :title => "Eliminar docente del grupo docente", :style => "padding-left:20px", :onclick => "if(!confirm('¿Está seguro que quiere eliminar al docente?')) return false;"
+
+
+  -if @preparadores.size > 0  || @es_del_grupo_docente
+    %br
+    %br
+    %h4
+      %strong
+        -if @preparadores.size == 1
+          Preparador
+        -else
+          Preparadores
+        -if @es_del_grupo_docente
+
+          -if @sitio_web.preparador.size > 0
+            =link_to '<i class="icon-pencil"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "grupo_docente", :action => "editar_preparadores"}, :id => "editar_preparador_grupo_docente_submit", :title => "Editar Preparadores", :style => "padding-left:20px"
+          -else
+            =link_to '<i class="icon-plus"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "grupo_docente", :action => "editar_preparadores"}, :id => "editar_preparador_grupo_docente_submit", :title => "Agregar Preparadores", :style => "padding-left:20px"
+
+          
+    
+    -if @preparadores.size > 0
+      %table{:class => "tabla table-striped table-bordered"}
+        %thead
+          %tr
+            %td Sección
+            %td Nombre
+            %td Correo
+            %td Tipo
+            -if @es_del_grupo_docente
+              %td Eliminar
+        %tbody
+          -@preparadores.each_with_index do |preparador, index|
+            %tr
+              %td{:style => "text-align:center"}
+                -if preparador.seccion
+                  =preparador.seccion_nombre
+                -else
+                  N/A
+              %td
+                =preparador.estudiante.usuario.nombre_y_apellido
+              %td
+                =preparador.correo
+              %td
+                -if preparador.tipo
+                  =preparador.tipo
+                -else
+                  N/A
+              -if @es_del_grupo_docente
+                %td
+                  =link_to '<i class="icon-trash"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "grupo_docente", :action => "eliminar_preparador", :id => preparador.id}, :id => "eliminar_preparador_grupo_docente_submit", :title => "Eliminar preparador del grupo docente", :style => "padding-left:20px", :onclick => "if(!confirm('¿Está seguro que quiere eliminar al preparador?')) return false;"
+
+
+    -else
+      %p
+        No existe ningún preparador agregado para este sitio web.
+
+

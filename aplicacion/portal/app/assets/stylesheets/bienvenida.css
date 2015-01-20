@@ -1,0 +1,24 @@
+#bienvenida{
+  height: 140px; 
+  width: 650px;
+  margin: 0px auto;
+  padding: 0;
+  
+  white-space:nowrap;
+  border-radius:10px;
+  list-style-type: none;
+
+  background: #003366;
+  background: -moz-linear-gradient(#003366,#0088cc);
+  background: -webkit-linear-gradient(#003366,#0088cc);
+  background: -o-linear-gradient(#003366,#0088cc);
+  background: -ms-linear-gradient(#003366,#0088cc);
+  background: linear-gradient(#003366,#0088cc);
+
+}
+
+#bienvenida p{
+  color : #FFFFFF;
+  align : center;
+
+}

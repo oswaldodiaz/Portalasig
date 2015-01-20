@@ -1,0 +1,2 @@
+module BitacoraHelper
+end

@@ -1,0 +1,11 @@
+table-modal{
+}
+
+table-modal tr{
+    padding-top: 5px;
+}
+
+table-modal td{
+    padding-bottom: 5px;
+    padding-right: 20px;
+}

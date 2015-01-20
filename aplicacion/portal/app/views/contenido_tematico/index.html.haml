@@ -1,0 +1,27 @@
+%h3{:style => "padding-bottom:10px"}
+	Contenido Temático
+	-if @es_del_grupo_docente
+		-if @sitio_web.contenido_tematico.size > 0
+			=link_to '<i class="icon-pencil"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "contenido_tematico", :action => "editar"}, :id => "agregar_contenido_tematico_submit", :title => "Editar Contenido Temático", :style => "padding-left:20px"
+		-else
+			=link_to '<i class="icon-plus"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "contenido_tematico", :action => "editar"}, :id => "agregar_contenido_tematico_submit", :title => "Agregar Contenido Temático", :style => "padding-left:20px"
+
+
+-if @sitio_web.contenido_tematico.size > 0
+	-@sitio_web.contenido_tematico.each_with_index do |contenido, i|
+		%p{:style => "width: 550px;"}
+			%strong
+				= succeed '.' do
+					=(i+1).to_s
+				=contenido.titulo
+			-if @es_del_grupo_docente
+				=link_to '<i class="icon-trash"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "contenido_tematico", :action => "eliminar", :id => contenido.id}, :id => "eliminar_contenido_tematico", :title => "Eliminar contenido temático", :style => "padding-left:20px", :onclick => "if(!confirm('¿Está seguro que quiere eliminar este tema?')) return false;"
+		%p{:style => "text-align:justify"}
+			=contenido.descripcion
+		%br
+			
+-elsif @es_del_grupo_docente
+	%p
+		No existe ningún contenido temático para este sitio web.
+
+		

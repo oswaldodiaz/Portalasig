@@ -1,0 +1,24 @@
+-if @es_del_grupo_docente
+  %h3{:style => "padding-bottom:10px"}
+    Registro de actividades
+
+  -if @registros
+    -if @registros.size > 0
+      %table{:class => "tabla table-striped table-bordered"}
+        %thead
+          %tr
+            %td Fecha
+            %td Usuario
+            %td Acción
+        %tbody
+          -@registros.each_with_index do |registro, index|
+            %tr
+              %td{:style => "text-align:center;width:100px;"}
+                =registro.fecha.strftime("%d/%m/%Y")
+              %td{:style => "text-align:center;width:120px;"}
+                =registro.usuario.nombre_y_apellido
+              %td
+                =registro.descripcion
+    -else
+      %p
+        No se ha realizado ninguna actividad todavía.

@@ -1,0 +1,126 @@
+:javascript
+  $(document).ready(function() {
+    $( "#tabs" ).tabs();
+  });
+
+
+-if @es_del_grupo_docente || @pertenece_al_sitio_web
+  %h3{:style => "padding-bottom:10px"}
+    Calificaciones
+    =link_to image_tag("excel.png"), {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "calificacion", :action => "descargar_calificaciones"}, :id => "descargar_evaluaciones_button", :title => "Descargar Evaluaciones", :style => "padding-left:20px;heigth:6px;display:none"
+
+    -if Calificacion.where(:evaluacion_id => Evaluacion.where(:sitio_web_id => @sitio_web.id)).size > 0
+      :javascript
+        $('#descargar_evaluaciones_button').show();
+
+
+  -if @sitio_web.evaluacion.size > 0
+    -if @es_del_grupo_docente
+      -if @sitio_web.estudiantes.size > 0
+        #tabs
+          %ul
+            -@sitio_web.seccion_sitio_web.each_with_index do |sec_sitio_web, sec_index|
+              %li
+                %a{:href=>"#tabs-#{sec_index}"}
+                  =sec_sitio_web.seccion.nombre
+          
+          -@sitio_web.seccion_sitio_web.each_with_index do |seccion_sitio_web, seccion_index|
+            %div{:id => "tabs-#{seccion_index}"}
+              -if seccion_sitio_web.estudiantes.size > 0
+                %div{:id=>"accordion_#{seccion_index}"}
+                  -@sitio_web.evaluacion.each_with_index do |evaluacion, evaluacion_index|
+                    %h3
+                      =evaluacion.nombre
+
+                      %a{:href => "#", :class=>"button_editar_calificaciones_evaluacion", :id => "button_editar_calificaciones_evaluacion_#{evaluacion_index}_#{seccion_index}", :style => "padding-left:20px", :title => "Editar calificaciones"}
+                        %i{:class => "icon-pencil"}
+
+                      %a{:href => "#", :class=>"button_cancelar_calificaciones_evaluacion", :id => "button_cancelar_calificaciones_evaluacion_#{evaluacion_index}_#{seccion_index}", :style => "padding-left:20px;display:none", :title => "Cancelar edición"}
+                        %i{:class => "icon-remove"}
+                    %div
+
+                      =form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "calificacion", :action => "editar"}, {:class => "formulario_editar_calificacion", :id => "formulario_calificaciones_evaluacion_#{evaluacion_index}_#{seccion_index}"})do  
+
+                        =hidden_field :a, :a, {:id => "evaluacion_id_#{evaluacion_index}", :value => evaluacion.id}
+
+                        %table{:class => "tabla table-striped table-bordered table-editable"}
+                          %thead
+                            %tr
+                              %td Cédula
+                              %td Estudiante
+                              %td Nota
+                          %tbody
+                            -Usuario.order(:apellido, :nombre).where(:id => EstudianteSeccionSitioWeb.where(:seccion_sitio_web_id => SeccionSitioWeb.where(:sitio_web_id => @sitio_web.id, :seccion_id => seccion_sitio_web.seccion_id).collect{|x| x.id}).collect{|x| x.estudiante_id}).each_with_index do |usuario, index|
+                              %tr
+                                %td{:style => "text-align:center"}
+                                  =usuario.cedula
+                                %td
+                                  =usuario.nombre_y_apellido
+                                %td{:class => "calificacion_evaluacion_#{evaluacion_index}_#{seccion_index}", :style => "width:50px"}
+                                  -if Calificacion.where(:estudiante_id => usuario.id, :evaluacion_id => evaluacion.id).size > 0
+                                    -calificacion = Calificacion.where(:estudiante_id => usuario.id, :evaluacion_id => evaluacion.id).first.calificacion
+                                  %div{:id => "evaluacion_#{evaluacion_index}_#{seccion_index}_calificacion_#{index}", :style => "padding-bottom: 1px;padding-top: 1px;text-align:center"}
+                                    -if calificacion != nil
+                                      =calificacion
+                                    -else
+                                      \-
+                                  %div{:id => "editar_evaluacion_#{evaluacion_index}_#{seccion_index}_calificacion_#{index}", :style => "display:none;"}
+                                    =hidden_field :a, :a, {:id => "estudiante_#{evaluacion_index}_#{seccion_index}_#{index}", :value => usuario.id}
+                                    =text_field :a, :a, {:id => "calificacion_#{evaluacion_index}_#{seccion_index}_#{index}", :style => "width: 45px;padding: 0;margin: 0;", :value => "#{calificacion}"}
+                        
+                        %p{:style => "margin:0px auto;padding-top:10px;", :id => "p_editar_calificaciones_evaluacion_#{evaluacion_index}_#{seccion_index}"}
+                          = submit_tag "Guardar", :class=>"btn btn-primary", :id => "submit_editar_calificaciones_evaluacion_#{evaluacion_index}_#{seccion_index}", :style => "display:none", :href => "#"
+                          %span{:id => 'ajax-loader', :style => "display:none"}
+                            =image_tag "ajax-loader.gif"
+                    
+                :javascript
+                  $( "#accordion_#{seccion_index}" ).accordion();
+              
+              -else
+                No existen estudiantes para esta sección.
+      -else
+        No existen estudiantes para calificar todavía.
+
+    -else
+      -nota_final = 0
+      %br
+      %table{:class => "tabla table-striped table-bordered table-editable"}
+        %thead
+          %tr
+            %td
+              Evaluación
+            %td
+              Porcentaje
+            %td
+              Nota
+        %tbody
+          -@sitio_web.evaluacion.each_with_index do |evaluacion, evaluacion_index|
+            %tr
+              %td
+                =evaluacion.nombre
+              %td
+                =evaluacion.valor
+              %td
+                -calificacion = nil
+                -if Calificacion.where(:estudiante_id => session[:usuario].id, :evaluacion_id => evaluacion.id).size > 0
+                  -calificacion = Calificacion.where(:estudiante_id => session[:usuario].id, :evaluacion_id => evaluacion.id).first.calificacion
+                -if calificacion != nil
+                  =calificacion
+                  -nota_final += (evaluacion.valor.to_f*calificacion.to_f)
+                -else
+                  \-
+
+          %tr
+            %td
+              %strong Total
+            %td
+              %strong
+                =@sitio_web.total_evaluaciones
+            %td
+              %strong
+                =(nota_final/@sitio_web.total_evaluaciones).round(2)
+  -else
+    %p
+      No existen evaluaciones para este sitio web.
+-else
+  Usted no tiene autorización para visualizar esta página.

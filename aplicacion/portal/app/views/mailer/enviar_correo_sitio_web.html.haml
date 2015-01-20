@@ -1,0 +1,25 @@
+!!!
+%html
+  %head
+    %meta{:content=>'text/html; charset=UTF-8', "http-equiv"=>'Content-Type'}    
+  
+  %body{:style => "background-color:#EDD598;"}
+    #cabecera{:style => "background-color:#FFFFFF;width: 80%;margin: 0px auto;margin-top:15px;margin-bottom: 5px;border:1px solid #003366;border-radius:5px;"}
+      #espacio{:style => "padding-left: 10px; padding-right:10px"}
+        #titulo{:style => "margin: 0px auto;font-size: 16px; text-align: center;"}
+          %strong
+            %p
+              Portal de sitios web de asignaturas de la Facultad de Ciencias - UCV
+
+        -if @descripcion
+          = raw @descripcion
+
+        -if @usuario
+          %p
+            %strong
+              = @usuario
+
+    #pie_pagina{:style => "background-color:#003366;width: 80%;margin: 0px auto;margin-top: 10px;margin-bottom: 15px;border:1px solid #003366;border-radius:10px;color:#FFFFFF;text-align: center;"}
+      %p :: Universidad Central de Venezuela ::
+      %p :: Facultad de Ciencias :: 
+      %p Paseo Los Ilustres Urb. Valle Abajo. Código Postal 1040. Caracas-Venezuela 

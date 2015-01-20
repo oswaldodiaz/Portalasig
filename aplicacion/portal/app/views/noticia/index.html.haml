@@ -1,0 +1,41 @@
+:javascript
+  $(document).ready(function() {
+    $( ".noticia" ).click(function(){
+      window.location = $( "#enlace" ).attr("href")+"/"+ $(this).attr("id");
+
+    });
+  });
+
+
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:150px"}
+    %h3
+      Noticias
+      -if @es_del_grupo_docente
+        =link_to '<i class="icon-plus"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "noticia", :action => "crear"}, :id => "agregar_noticia_button", :title => "Agregar una noticia", :style => "padding-left:20px"
+
+
+
+-if @sitio_web.notice.size > 0
+  -@sitio_web.notice.order("created_at DESC").each_with_index do |noticia_sitio_web, index|
+    =link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "noticia", :action => "noticias"}, {:style => "display: none;", :id => "enlace"}
+    
+    %div{:href => "#", :class => "btn noticia", :id => noticia_sitio_web.id}
+      .row-fluid{:style => "text-align: justify;margin: 10px 0px 5px 20px;width: 555px;"}
+        %h4
+          =noticia_sitio_web.titulo
+        =noticia_sitio_web.noticia_corta
+      .row-fluid{:style => "margin: 10px 0px 0px 20px;width: 555px;"}
+          
+        .span{:style => "float:right;text-align: right;width:555px"}
+          %h5
+            =noticia_sitio_web.created_at.strftime("%d/%m/%Y %H:%M %P")
+
+    -if @es_del_grupo_docente
+      =link_to '<i class="icon-trash"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "noticia", :action => "eliminar_noticia", :id => noticia_sitio_web.id}, :id => "eliminar_noticia", :title => "Eliminar Noticia",:style => "text-align:left;padding-left:5px", :onclick => "if(!confirm('¿Está seguro que quiere eliminar la noticia?')) return false;"
+    %hr{:style => "margin: 0px 0px 15px 0px; display: block; height: 1px;border: 0;"}
+    
+
+-else
+  %p
+    No existe ninguna noticia para este sitio web.

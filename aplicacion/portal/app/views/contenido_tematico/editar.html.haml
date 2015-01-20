@@ -1,0 +1,55 @@
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %h3
+      Editar Contenido Temático
+      %a{:id => "agregar_contenido_tematico_button", :title => "Agregar Contenido Temático", :style => "padding-left:20px;"}
+        %i{:class => "icon-plus"}
+
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "contenido_tematico", action: "index"}, {:class => "btn"}
+
+
+=link_to "", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "contenido_tematico", action: "index"}, :style => "display:none", :id => "url"
+
+=form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "contenido_tematico", :action => "procesar_editar"}, {:class => "form-horizontal", :id => "formulario_editar_contenido_tematico"})do  
+
+  = hidden_field :contenido_tematico, :cantidad, {:value => ((@sitio_web.contenido_tematico.size > 0)? @sitio_web.contenido_tematico.size : 1 ), :autocomplete => "off"}
+  %table
+    %tbody{:id => "tbody_agregar_contenido_tematico"}
+      -if @sitio_web.contenido_tematico.size > 0
+        -@sitio_web.contenido_tematico.each_with_index do |contenido_tematico, i|
+          %tr{:id => i+1, :class => "contenido_tematico_contenido_tematico"}
+            %td{:style => "vertical-align:top;padding-right:10px;",  :id => "contenido_tematico_numero_tema_"+(i+1).to_s}
+              %strong
+                = precede 'Tema #' do
+                  =(i+1).to_s
+          %tr{:id => "titulo_"+(i+1).to_s}
+            %td{:style => "padding-bottom:5px;"}
+              = text_area :contenido_tematico, :contenido_tematico, {:id => "contenido_tematico_titulo_"+(i+1).to_s, :name => "contenido_tematico[titulo_"+(i+1).to_s+"]", :value => contenido_tematico.titulo, :class => "text_area_long", :style => "width: 500px;height: 30px;", :placeholder => "Título"}
+            %td{:style => "vertical-align:top;padding-left:10px;"}
+              %a{:href => "#", :id => "eliminar_contenido_tematico_"+(i+1).to_s, :onclick => "eliminar_contenido_tematico_tabla(this.id);return false;"}
+                %i{:class => "icon-trash"}
+          %tr{:id => "descripcion_"+(i+1).to_s}
+            %td{:style => "padding-bottom:10px;"}
+              =  text_area :contenido_tematico, :contenido_tematico, {:id => "contenido_tematico_descripcion_"+(i+1).to_s, :name => "contenido_tematico[descripcion_"+(i+1).to_s+"]",:value => contenido_tematico.descripcion, :class => "text_area_long", :style => "width: 500px;height: 60px;"}
+            
+
+      -else
+        %tr{:id => "1", :class => "contenido_tematico_contenido_tematico"}
+          %td{:style => "vertical-align:top;padding-right:10px;", :id => "contenido_tematico_numero_tema_"+(1).to_s}
+            %strong Tema #1
+        %tr{:id => "titulo_1"}
+          %td{:style => "padding-bottom:5px;"}
+            = text_area :contenido_tematico, :contenido_tematico, {:id => "contenido_tematico_titulo_1", :name => "contenido_tematico[titulo_1]", :class => "text_area_long", :style => "width: 500px;height: 30px;", :placeholder => "Título"}
+          %td{:style => "vertical-align:top;padding-left:10px;"}
+            %a{:href => "#", :id => "eliminar_contenido_tematico_"+(1).to_s, :onclick => "eliminar_contenido_tematico_tabla(this.id);return false;"}
+              %i{:class => "icon-trash"}
+        %tr{:id => "descripcion_1"}
+          %td{:style => "padding-bottom:10px;"}
+            = text_area :contenido_tematico, :contenido_tematico, {:id => "contenido_tematico_descripcion_1", :name => "contenido_tematico[descripcion_1]", :class => "text_area_long", :style => "width: 500px;height: 60px;", :placeholder => "Descripción"}
+
+
+  %p{:style => "margin:0px auto;text-align:center"}
+    = submit_tag "Guardar", :class=>"btn btn-primary", :id => "editar_contenido_tematico_submit"
+    %span{:id => 'ajax-loader', :style => "display:none"}
+      =image_tag "ajax-loader.gif"

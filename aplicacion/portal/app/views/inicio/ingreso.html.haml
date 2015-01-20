@@ -1,0 +1,30 @@
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:610px"}
+    %p
+      Para poder empezar a disfrutar del Portal, es necesario que active su cuenta ingresando una clave nueva.
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:action => "index", :controller => "inicio"}, {:class => "btn"}
+
+%p
+  Los campos con (*) son obligatorios.
+
+=link_to "", {:action => "index", :controller => "inicio"}, :style => "display:none", :id => "url"
+
+=form_tag({:controller => "inicio", :action => "activar_usuario"}, {:class => "form-horizontal", :id => "formulario_activacion_de_usuario"})do  
+  = hidden_field :usuario, :id, {:value => @usuario.id}
+  = hidden_field :usuario, :token, {:value => @usuario.token}
+  .control-group
+    %label{:class => "control-label"}
+      %strong Clave nueva (*): 
+    .controls
+      = password_field :usuario, :clave, {:class => "input-large"}
+  .control-group
+    %label{:class => "control-label"}
+      %strong Confirmar clave (*):
+    .controls
+      = password_field :usuario, :confirmacion, {:class => "input-large"}
+  .control-group
+    .controls 
+      = submit_tag "Guardar", :class=>"btn btn-primary", :id => "activar_usuario_submit"
+      %span{:id => 'ajax-loader', :style => "display:none"}
+        =image_tag "ajax-loader.gif"

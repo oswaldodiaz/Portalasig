@@ -1,0 +1,235 @@
+:javascript
+  $(document).ready(function() {
+    $.each($('.horario_aula'), function(){
+      $(this).autocomplete({
+        source: #{@aulas}
+      });
+    });
+  });
+
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %h3
+      Editar Horarios
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "horario", action: "index"}, {:class => "btn"}
+
+
+%p
+  Los campos con (*) son obligatorios.
+
+=link_to "", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "horario", action: "index"}, :style => "display:none", :id => "url"
+
+=form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "horario", :action => "procesar_editar"}, {:class => "form-horizontal", :id => "formulario_editar_horario"})do  
+  = hidden_field :sitio_web, :id, {:value => @sitio_web.id}
+
+  -docentes = Docente.where(:id => DocenteSitioWeb.where(:sitio_web_id => @sitio_web.id).collect{|x| x.docente_id}.uniq)
+
+  = hidden_field :sitio_web, :docentes, {:value => ((docentes.size)? docentes.size : 0 )}
+
+  -docentes.each_with_index do |docente, i|
+    -secciones = Seccion.where(:id => DocenteSitioWeb.where(:docente_id => docente.id, :sitio_web_id => @sitio_web.id).collect{|x| x.seccion_id}.uniq).collect{|x| x.nombre}
+    .input-append
+      -padding = "20"
+      -padding = "10" if i == 0
+      %h4{:style => "padding-top:10px;padding-bottom:5px"}
+        =docente.usuario.nombre_y_apellido
+        %a{:id => "agregar_horario_docente_"+(i+1).to_s, :class => "agregar_horario_docente", :title => "Agregar horario", :style => "padding-left:20px"}
+          %i{:class => "icon-plus"}
+
+    -cantidad = Horario.where(:usuario_id => docente.id, :sitio_web_id => @sitio_web.id).size
+    = hidden_field :docente, :c, {:id => "docente_cantidad_"+(i+1).to_s, :name => "docente[cantidad_"+(i+1).to_s+"]", :value => cantidad}
+    = hidden_field :docente, :c, {:id => "docente_id_"+(i+1).to_s, :name => "docente[id_"+(i+1).to_s+"]", :value => docente.id}
+
+    -valores = ""
+    -secciones.each_with_index do |seccion,si|
+      -valores += ((si == 0)? "" : "_") + seccion
+    = hidden_field :td_docente, "secciones_"+(i+1).to_s, {:value => valores}
+
+
+    %table{:class => "horario"}
+      %thead{:id => "horario_docente_"+(i+1).to_s}
+        %tr
+          %td{:style => "white-space: nowrap;"}
+            Sección (*)
+          %td
+            Día (*)
+          %td
+            Hora Inicio (*)
+          %td
+            Hora Fin (*)
+          %td
+            Tipo (*)
+          %td
+            Aula
+      %tbody{:id => "tbody_horario_docente_"+(i+1).to_s}
+        -if cantidad > 0
+          -Horario.where(:usuario_id => docente.id, :sitio_web_id => @sitio_web.id).each_with_index do |horario, j|
+
+            %tr{:id => "tr_horario_docente_"+(i+1).to_s+"_"+(j+1).to_s, :class => "fila_horario"}
+              %td{:style => "width: 94px;"}
+                -if secciones.size > 1
+                  = select(:horario_docente, "seccion_"+(i+1).to_s+"_"+(j+1).to_s, secciones, {:prompt => "Seleccione", :selected => horario.seccion.nombre})
+                -else
+                  =hidden_field :horario_docente, "seccion_"+(i+1).to_s+"_"+(j+1).to_s, {:value => secciones[0]}
+                  =secciones[0]
+
+              %td
+                = select(:horario_docente, "dia_"+(i+1).to_s+"_"+(j+1).to_s, @dias, {:prompt => "Seleccione", :selected => horario.dia})
+
+              %td
+                = select(:h, :h, @horas, {:prompt => "Seleccione", :selected => horario.hora_inicio}, {:id => "horario_docente_hora_inicio_"+(i+1).to_s+"_"+(j+1).to_s, :name => "horario_docente[hora_inicio_"+(i+1).to_s+"_"+(j+1).to_s+"]", :class => "horario_docente_hora_inicio", :onchange => "actualizar_hora_fin(this.id)"})                
+
+              %td
+                = select(:h, :h, {}, {:prompt => "Seleccione", :selected => horario.hora_fin}, {:id => "horario_docente_hora_fin_"+(i+1).to_s+"_"+(j+1).to_s, :name => "horario_docente[hora_fin_"+(i+1).to_s+"_"+(j+1).to_s+"]"})
+
+              %td
+                = select :h, :h, @tipos, { :prompt=> "Seleccione", :selected => horario.tipo}, {:id => "horario_docente_tipo_"+(i+1).to_s+"_"+(j+1).to_s, :name => "horario_docente[tipo_"+(i+1).to_s+"_"+(j+1).to_s+"]", :class => "horario_tipo"}
+
+              %td
+                = text_field :h, :h, {:id => "horario_docente_aula_"+(i+1).to_s+"_"+(j+1).to_s, :name => "horario_docente[aula_"+(i+1).to_s+"_"+(j+1).to_s+"]", :placeholder => "01", :value => horario.aula, :class => "horario_aula"}
+              %td
+                %a{:href => "#", :id => "eliminar_horario_docente_"+(i+1).to_s+"_"+(j+1).to_s, :title => "Eliminar horario", :onclick => "eliminar_horario_docente_tabla(this.id)"}
+                  %i{:class => "icon-trash"}
+              :javascript
+                actualizar_hora_fin("horario_docente_hora_inicio_"+(parseInt("#{i}")+1)+"_"+(parseInt("#{j}")+1));
+
+
+        -else
+          %tr{:id => "tr_horario_docente_"+(i+1).to_s+"_1", :class => "fila_horario"}
+            %td{:style => "width: 94px;"}
+              -if secciones.size > 1
+                = select(:horario_docente, "seccion_"+(i+1).to_s+"_1", secciones, {:prompt => "Seleccione"})
+              -else
+                =hidden_field :horario_docente, "seccion_"+(i+1).to_s+"_1", {:value => secciones[0]}
+                =secciones[0]
+            %td
+              = select(:horario_docente, "dia_"+(i+1).to_s+"_1", @dias, {:prompt => "Seleccione"})
+
+            %td
+              = select(:h, :h, @horas, {:prompt => "Seleccione"}, {:id => "horario_docente_hora_inicio_"+(i+1).to_s+"_1", :name => "horario_docente[hora_inicio_"+(i+1).to_s+"_1]", :class => "horario_docente_hora_inicio", :onchange => "actualizar_hora_fin(this.id)"})
+
+            %td
+              = select(:h, :h, @horas, {:prompt => "Seleccione"}, {:id => "horario_docente_hora_fin_"+(i+1).to_s+"_1", :name => "horario_docente[hora_fin_"+(i+1).to_s+"_1]"})
+
+            %td
+              = select :h, :h, @tipos, { :prompt=> "Seleccione"}, {:id => "horario_docente_tipo_"+(i+1).to_s+"_1", :name => "horario_docente[tipo_"+(i+1).to_s+"_1]", :class => "horario_tipo"}
+
+            %td
+              = text_field :h, :h, {:id => "horario_docente_aula_"+(i+1).to_s+"_1", :name => "horario_docente[aula_"+(i+1).to_s+"_1]", :placeholder => "01", :class => "horario_aula"}
+            %td
+              %a{:href => "#", :id => "eliminar_horario_docente_"+(i+1).to_s+"_1", :title => "Eliminar horario", :onclick => "eliminar_horario_docente_tabla(this.id)"}
+                %i{:class => "icon-trash"}
+          :javascript
+            $(document).ready(function() {
+              $("#docente_cantidad_"+(parseInt(#{i})+1)).val(1);    
+            });
+
+
+
+  -preparadores = Estudiante.where(:id => Preparador.where(:sitio_web_id => @sitio_web.id).collect{|x| x.estudiante_id}.uniq)
+  
+  = hidden_field :sitio_web, :preparadores, {:value => ((preparadores.size)? preparadores.size : 0)}
+  -preparadores.each_with_index do |preparador, i|
+
+    -secciones = Seccion.where(:id => Preparador.where(:estudiante_id => preparador.id).collect{|x| x.seccion_id}.uniq).collect{|x| x.nombre}
+
+    .input-append
+      %h4{:style => "padding-top:20px;padding-bottom:5px"}
+        =preparador.usuario.nombre_y_apellido
+        %a{:id => "agregar_horario_preparador_"+(i+1).to_s, :class => "agregar_horario_preparador", :title => "Agregar horario", :style => "padding-left:20px"}
+          %i{:class => "icon-plus"}
+
+    -cantidad = Horario.where(:usuario_id => preparador.id, :sitio_web_id => @sitio_web.id).size
+    = hidden_field :preparador, :c, {:id => "preparador_cantidad_"+(i+1).to_s, :name => "preparador[cantidad_"+(i+1).to_s+"]", :value => cantidad}
+    = hidden_field :preparador, :c, {:id => "preparador_id_"+(i+1).to_s, :name => "preparador[id_"+(i+1).to_s+"]", :value => preparador.id}
+
+    -valores = ""
+    -secciones.each_with_index do |seccion,si|
+      -valores += ((si == 0)? "" : "_") + seccion
+    = hidden_field :td_preparador, "secciones_"+(i+1).to_s, {:value => valores}
+    
+    %table{:class => "horario"}
+      %thead{:id => "horario_preparador_"+(i+1).to_s}
+        %tr
+          %td{:style => "white-space: nowrap;"}
+            Sección (*)
+          %td
+            Día (*)
+          %td
+            Hora Inicio (*)
+          %td
+            Hora Fin (*)
+          %td
+            Tipo (*)
+          %td
+            Aula
+      %tbody{:id => "tbody_horario_preparador_"+(i+1).to_s}
+        -if cantidad > 0
+          -Horario.where(:usuario_id => preparador.id, :sitio_web_id => @sitio_web.id).each_with_index do |horario, j|
+
+            %tr{:id => "tr_horario_preparador_"+(i+1).to_s+"_"+(j+1).to_s, :class => "fila_horario"}
+              %td{:style => "width: 94px;"}
+                -if secciones.size > 1
+                  = select(:horario_preparador, "seccion_"+(i+1).to_s+"_"+(j+1).to_s, secciones, {:prompt => "Seleccione", :selected => horario.seccion.nombre})
+                -else
+                  =hidden_field :horario_preparador, "seccion_"+(i+1).to_s+"_"+(j+1).to_s, {:value => secciones[0]}
+                  =secciones[0]
+
+              %td
+                = select(:h, :h, @dias, {:prompt => "Seleccione", :selected => horario.dia},{:id => "horario_preparador_dia_"+(i+1).to_s+"_"+(j+1).to_s, :name => "horario_preparador[dia_"+(i+1).to_s+"_"+(j+1).to_s+"]"})
+
+              %td
+                = select(:h, :h, @horas, {:prompt => "Seleccione", :selected => horario.hora_inicio}, {:id => "horario_preparador_hora_inicio_"+(i+1).to_s+"_"+(j+1).to_s, :name => "horario_preparador[hora_inicio_"+(i+1).to_s+"_"+(j+1).to_s+"]", :class => "horario_preparador_hora_inicio", :onchange => "actualizar_hora_fin(this.id)"})
+
+              %td
+                = select(:h, :h, {}, {:prompt => "Seleccione", :selected => horario.hora_fin}, {:id => "horario_preparador_hora_fin_"+(i+1).to_s+"_"+(j+1).to_s, :name => "horario_preparador[hora_fin_"+(i+1).to_s+"_"+(j+1).to_s+"]"})
+
+              %td
+                = select :h, :h, @tipos, { :prompt=> "Seleccione", :selected => horario.tipo}, {:id => "horario_preparador_tipo_"+(i+1).to_s+"_"+(j+1).to_s, :name => "horario_preparador[tipo_"+(i+1).to_s+"_"+(j+1).to_s+"]", :class => "horario_tipo"}
+
+              %td
+                = text_field :h, :h, {:id => "horario_preparador_aula_"+(i+1).to_s+"_"+(j+1).to_s, :name => "horario_preparador[aula_"+(i+1).to_s+"_"+(j+1).to_s+"]", :placeholder => "01", :value => horario.aula, :class => "horario_aula"}
+              %td
+                %a{:href => "#", :id => "eliminar_horario_preparador_"+(i+1).to_s+"_"+(j+1).to_s, :title => "Eliminar horario", :onclick => "eliminar_horario_preparador_tabla(this.id)"}
+                  %i{:class => "icon-trash"}
+              :javascript
+                actualizar_hora_fin("horario_preparador_hora_inicio_"+(parseInt("#{i}")+1)+"_"+(parseInt("#{j}")+1));
+
+
+        -else
+          %tr{:id => "tr_horario_preparador_"+(i+1).to_s+"_1", :class => "fila_horario"}
+            %td{:style => "width: 94px;"}
+              -if secciones.size > 1
+                = select(:horario_preparador, "seccion_"+(i+1).to_s+"_1", secciones, {:prompt => "Seleccione"})
+              -else
+                =hidden_field :horario_preparador, "seccion_"+(i+1).to_s+"_1", {:value => secciones[0]}
+                =secciones[0]
+            %td
+              = select(:h, :h, @dias, {:prompt => "Seleccione"},{:id => "horario_preparador_dia_"+(i+1).to_s+"_1", :name => "horario_preparador[dia_"+(i+1).to_s+"_1]"})
+
+            %td
+              = select(:h, :h, @horas, {:prompt => "Seleccione"}, {:id => "horario_preparador_hora_inicio_"+(i+1).to_s+"_1", :name => "horario_preparador[hora_inicio_"+(i+1).to_s+"_1]", :class => "horario_preparador_hora_inicio", :onchange => "actualizar_hora_fin(this.id)"})
+
+            %td
+              = select(:h, :h, @horas, {:prompt => "Seleccione"}, {:id => "horario_preparador_hora_fin_"+(i+1).to_s+"_1", :name => "horario_preparador[hora_fin_"+(i+1).to_s+"_1]"})
+
+            %td
+              = select :h, :h, @tipos, { :prompt=> "Seleccione"}, {:id => "horario_preparador_tipo_"+(i+1).to_s+"_1", :name => "horario_preparador[tipo_"+(i+1).to_s+"_1]", :class => "horario_tipo"}
+
+            %td
+              = text_field :h, :h, {:id => "horario_preparador_aula_"+(i+1).to_s+"_1", :name => "horario_preparador[aula_"+(i+1).to_s+"_1]", :placeholder => "01", :class => "horario_aula"}
+            %td
+              %a{:href => "#", :id => "eliminar_horario_preparador_"+(i+1).to_s+"_1", :title => "Eliminar horario", :onclick => "eliminar_horario_preparador_tabla(this.id)"}
+                %i{:class => "icon-trash"}
+          :javascript
+            $(document).ready(function() {
+              $("#preparador_cantidad_"+(parseInt(#{i})+1)).val(1);    
+            });
+
+
+  %br  
+  %p{:style => "margin:0px auto;text-align:center"}
+    = submit_tag "Guardar", :class=>"btn btn-primary", :id => "editar_horario_submit"
+    %span{:id => 'ajax-loader', :style => "display:none"}
+      =image_tag "ajax-loader.gif"

@@ -1,0 +1,50 @@
+%h3{:style => "padding-bottom:10px"}
+  Evaluación
+  -if @es_del_grupo_docente
+    -if @sitio_web.evaluacion.size > 0
+      =link_to '<i class="icon-pencil"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "evaluacion", :action => "editar"}, :id => "editar_evaluacion_icon", :title => "Editar Evaluación", :style => "padding-left:20px"
+    -else
+      =link_to '<i class="icon-plus"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "evaluacion", :action => "editar"}, :id => "editar_evaluacion_icon", :title => "Agregar Evaluación", :style => "margin-left:20px"
+
+
+
+-if @sitio_web.evaluacion.size > 0
+  %table{:class => "tabla table-striped table-bordered"}
+    %thead
+      %tr
+        %td Nombre
+        %td Tipo
+        %td Porcentaje
+        -if @sitio_web.tiene_evaluaciones_con_fecha
+          %td Fecha
+        -if @es_del_grupo_docente
+          %td Eliminar
+    %tbody
+      -@sitio_web.evaluacion.order("fecha_inicio").each_with_index do |evaluacion, index|
+        %tr
+          %td{:style => "text-align:center"}
+            =evaluacion.nombre
+          %td{:style => "text-align:center"}
+            =evaluacion.tipo
+          %td{:style => "text-align:center"}
+            =evaluacion.valor.to_i.to_s
+
+          -if @sitio_web.tiene_evaluaciones_con_fecha
+            %td{:style => "text-align:center"}
+              -if evaluacion.fecha_inicio
+                =evaluacion.fecha_inicio.strftime("%d/%m/%Y")
+                -if evaluacion.fecha_fin && evaluacion.fecha_inicio < evaluacion.fecha_fin
+                  \-
+                  =evaluacion.fecha_fin.strftime("%d/%m/%Y")
+                
+              -else
+                \-
+
+          -if @es_del_grupo_docente
+            %td
+              =link_to '<i class="icon-trash"></i>'.html_safe, {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "evaluacion", :action => "eliminar", :id => evaluacion.id}, :id => "eliminar_evaluacion_submit", :title => "Eliminar Evaluación", :style => "padding-left:20px", :onclick => "if(!confirm('¿Está seguro que quiere eliminar la evaluación?')) return false;"
+
+
+-else
+  %p
+    No existe ninguna evaluación para este sitio web.

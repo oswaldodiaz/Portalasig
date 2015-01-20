@@ -1,0 +1,160 @@
+.row-fluid{:style => "padding-bottom:10px"}
+	.span{:style => "text-align:left;width:530px"}
+		%ul{:class=>"nav nav-pills", :style => "margin-bottom:0px"}
+			%li{:class=>"active"}
+				%a{:href=>"#", :id => "li_agregar_lista", :class => "li_agregar"}
+					Agregar lista de asignaturas
+			%li
+				%a{:href=>"#", :id => "li_agregar_uno", :class => "li_agregar"}
+					Agregar una asignatura
+	.span{:style => "float:right;text-align: right;width:60px"}
+		=link_to "Volver", {:action => "asignaturas", :controller => "admin"}, {:class => "btn"}
+
+
+%div{:id => "div_agregar_lista", :class => "div_agregar"}
+	-if flash[:errores]
+		-texto = ""
+		-if flash[:errores].size > 1
+			-if flash[:errores].size > 5
+				-texto = "Este archivo no corresponde con el formato presentado en la imagen de abajo."
+			-else
+				-texto = "<ul>Disculpe, se cometieron los siguientes errores:"
+				-flash[:errores].each do |mensaje|
+					-texto += "<li>"
+					-texto += mensaje
+					-texto += "</li>"
+				-texto += "</ul>"
+		-else
+			-texto = flash[:errores][0]
+
+		:javascript
+			$('#mensajes').show();
+			$("#mensajes").attr('class', 'alert alert-error');
+			$('#flash').empty();
+			$('#flash').append("#{texto}");
+			$(document).ready(function() {
+				$('#li_agregar_lista').click();
+			});
+
+  %br
+	=form_tag({:controller => "admin", :action => "procesar_subir_lista_asignaturas"}, {:multipart => true, :style => "margin-bottom:10px", :onsubmit => "$('#submit_tag').attr('disabled','disabled');$('#ajax-loader2').show();"})do  
+		%table
+			%tr
+				%td
+					= file_field_tag :archivo, :accept => 'xls/xlsx/ods', :style => "width:360px"
+			%tr
+				%td
+					= submit_tag "Subir", :class => "btn btn-primary", :id => "submit_tag"
+					%span{:id => 'ajax-loader2', :style => "display:none"}
+						=image_tag "ajax-loader.gif"
+
+	%p
+		Suba la lista de asignaturas para agregarlas al portal. Esta lista debe cumplir el formato presentado a continuación:
+	%p
+		=image_tag "formato_lista_asignaturas.png", :alt => "Ejemplo de lista de asignaturas"
+	%p
+		%ul
+			%strong Nota:
+			%li El código debe ser de 4 dígitos numéricos.
+			%li La licenciatura debe ser alguna de las mostradas en la imagen.
+			%li UC significa Unidades de Crédito y deben ser numéricas.
+			%li Los requisitos son las asignaturas que prelan a la actual, las cuales no son obligatorias.
+			%li El tipo de asignatura no debe estar vacío y debe ser alguna de las opciones mostradas en la imagen ("Obligatoria", "Electiva", "Optativa obligatoria", "Complementaria" u "Otra").
+			%li La clasificación depende del tipo, las asignaturas Obligatorias se clasifican en semestres ("Semestre I", "Semestre II",...), las asignaturas "Electivas" u "Optativas obligatoria" se clasifican según la mención ("Aplicaciones con la Tecnología Internet", "Biología animal", ...) y las demás asignaturas no tienen clasificación.
+			%li La asignatura se ubicará en el portal según la Licenciatura y la clasificación que se coloquen.
+			%li Las asignaturas complementarias se ubicarán en la sección "Complementaria" del menú izquierdo en la página principal del portal.
+
+%div{:id => "div_agregar_uno", :class => "div_agregar", :style => "display:none"}
+
+	%p
+		Los campos con (*) son obligatorios.
+
+
+	=link_to "", {:action => "asignaturas", :controller => "admin"}, :style => "display:none", :id => "url"
+
+	=form_tag({:controller => "admin", :action => "procesar_agregar_asignatura"}, {:class => "form-horizontal", :id => "formulario_agregar_asignatura_administrador"})do  
+		.control-group
+			%label{:class => "control-label"}
+				%strong Código (*):
+			.controls
+				= text_field :asignatura, :codigo, {:placeholder => "1234", :class => "input-large"}
+				
+		.control-group
+			%label{:class => "control-label"}
+				%strong Nombre (*):
+			.controls
+				= text_field :asignatura, :nombre, {:placeholder => "Nombre", :class => "input-large"}
+			
+		.control-group
+			%label{:class => "control-label"}
+				%strong Licenciaturas (*):
+			.controls
+				= hidden_field :carreras, :cantidad, {:value => @carreras.size}
+
+				-carrera_anterior = ""
+				%table
+					-@carreras.each_with_index do |carrera,index|
+						-if index%2 == 0
+							-carrera_anterior = carrera
+						-else
+							%tr
+								%td
+									=check_box_tag 'check_box_carrera_'+(index).to_s, carrera_anterior, false, :class => "carreras", :style => "margin-top: -4px;"
+									=carrera_anterior
+								%td
+									=check_box_tag 'check_box_carrera_'+(index+1).to_s, carrera, false, :class => "carreras", :style => "margin-top: -4px;"
+									=carrera
+							-carrera_anterior = ""
+					-if carrera_anterior != ""
+						%tr
+							%td
+								=check_box_tag 'check_box_carrera_'+(@carreras.size).to_s, carrera_anterior, false, :class => "carreras", :style => "margin-top: -4px;"
+								=carrera_anterior
+			
+		.control-group
+			%label{:class => "control-label"}
+				%strong Créditos (*):
+			.controls
+				= text_field(:asignatura, :unidades_credito, {:placeholder => "3", :class => "input-large"})
+		
+		.control-group
+			%label{:class => "control-label"}
+				%strong Requisitos:
+			.controls
+				= text_area :asignatura, :requisitos, {:placeholder => "Asignatura I, Asignatura II, Asignatura III, ..."}
+
+		.control-group
+			%label{:class => "control-label"}
+				%strong Tipo (*):
+			.controls
+				= select(:asignatura, :tipo, @tipos, {:prompt => "Seleccione"})
+
+		#clasificacion{:style => "display:none"}
+			.control-group
+				%label{:class => "control-label"}
+					#clasificacion_texto
+				.controls
+					#tipo_obligatoria{:style => "display:none"}
+						= select(:asignatura, :clasificacion_obligatoria, @clasificaciones, {:prompt => "Seleccione"})
+					#tipo_electiva{:style => "display:none"}
+						=hidden_field :cantidad, :menciones, {:value => "1", :autocomplete => "off"}
+						%p{:id => "p_mencion_1"}
+							= select(:asignatura, :mencion_1, ["Otra"], {:prompt => "Seleccione"}, {:class => "asignatura_mencion", :onchange=>"asignatura_mencion_otra(this.id)"})
+							= text_field(:asignatura, :mencion_otra_1, {:placeholder => "Mención", :style => "display:none;width: 200px;"})
+
+							%a{:id => "agregar_mencion_a_asignatura_button", :class => "btn", :title => "Agregar mención"}
+								%i{:class => "icon-plus"}
+		
+		.control-group
+			.controls	
+				= submit_tag "Guardar", :class=>"btn btn-primary", :id => "agregar_asignatura_administrador_submit"
+				%span{:id => 'ajax-loader', :style => "display:none"}
+					=image_tag "ajax-loader.gif"
+
+	%p
+		%ul
+			%strong Nota:
+			%li El código debe ser de 4 dígitos numéricos.
+			%li Los créditos son las unidades de crédito de la asignatura y estas deben ser numéricas.
+			%li La asignatura se ubicará en el portal según la Licenciatura y la clasificación (Semestre o Mención) que se coloquen.
+			%li Las asignaturas complementarias se ubicarán en la sección Complementarias del menú izquierdo.

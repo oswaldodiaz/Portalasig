@@ -1,0 +1,26 @@
+.evaluacion {
+  padding-top: 5px;
+}
+.evaluacion td{
+  padding: 0px 10px 5px 0px;
+}
+
+.evaluacion thead td{
+  font-weight:bold;
+}
+
+.evaluacion_nombre{
+  width:150px;
+}
+
+.evaluacion_tipo {
+  width:110px;
+}
+
+.evaluacion_valor {
+  width:80px;
+}
+
+.evaluacion_fecha {
+  width:80px;
+}

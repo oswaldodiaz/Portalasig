@@ -1,0 +1,32 @@
+-if @pertenece_al_sitio_web
+  .row-fluid{:style => "padding-bottom:10px"}
+    .span{:style => "text-align:left;width:150px"}
+      %h3
+        Nuevo Foro
+    .span{:style => "float:right;text-align: right;width:60px"}
+      =link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "foro", action: "index"}, {:class => "btn"}
+
+
+  =link_to "", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "foro", action: "index"}, {:style => "display:none", :id => "url"}
+    
+  =form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "foro", :action => "procesar_crear"}, {:class => "form-horizontal", :id => "formulario_foro_nuevo"})do  
+
+    %table
+      %tbody{:id => "tbody_crear_foro"}
+        %tr{:id => "autor_"}
+          %td{:style => "padding-bottom:5px;"}
+            %strong
+              Autor:
+            = session[:usuario].nombre_y_apellido
+        %tr{:id => "titulo_"}
+          %td{:style => "padding-bottom:5px;"}
+            = text_field :foro, :titulo, {:class => "text_area_long", :style => "width: 500px;", :placeholder => "Título"} 
+        %tr{:id => "descripcion_"}
+          %td{:style => "padding-bottom:10px;"}
+            = text_area :foro, :texto, {:class => "text_area_long", :style => "width: 500px;height: 60px;", :placeholder => "Descripción"}
+
+    = submit_tag "Crear", :class=>"btn btn-primary", :id => "procesar_crear_foro_submit"
+    %span{:id => 'ajax-loader', :style => "display:none"}
+      =image_tag "ajax-loader.gif"
+
+

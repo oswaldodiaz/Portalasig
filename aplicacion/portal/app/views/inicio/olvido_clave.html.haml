@@ -1,0 +1,20 @@
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %p
+      Para poder recuperar su clave es necesario que ingrese su número de cédula.
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:action => "index", :controller => "inicio"}, {:class => "btn"}
+
+    
+=link_to "", {:action => "index", :controller => "inicio"}, :style => "display:none", :id => "url"
+
+
+=form_tag({:controller => "inicio", :action => "enviar_correo_olvido_clave"}, {:class => "form-horizontal", :id => "formulario_olvido_clave"})do  
+  .control-group
+    %label{:class => "control-label"}
+      %strong Cédula: 
+    .controls
+      = text_field :usuario, :cedula, {:placeholder => "12345678", :class => "input-large"}
+      = submit_tag "Enviar", :class=>"btn btn-primary", :id => "enviar_correo_olvido_clave_submit"
+      %span{:id => 'ajax-loader', :style => "display:none"}
+        =image_tag "ajax-loader.gif"

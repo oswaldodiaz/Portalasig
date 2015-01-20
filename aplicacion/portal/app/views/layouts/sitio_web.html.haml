@@ -1,0 +1,387 @@
+!!!
+%html
+  %head
+    %title Portal de sitios web de asignaturas de la Facultad de Ciencias de la Universidad Central de Venezuela
+    = stylesheet_link_tag    "application", :media => "all"
+    = javascript_include_tag "application", :media => "all"
+    = csrf_meta_tags
+    = favicon_link_tag 'favicon.ico'
+  %body
+    #cabecera
+      #menu_ciencias
+        %ul
+          %li
+            %a{:href => "http://www.ciens.ucv.ve/ciens", :style =>"color:#FFFFFF;" }Facultad de Ciencias
+
+            %ul
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/autoridades/" }Autoridades
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/historia/"}Historia
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/estructura-academica/"}Estructura Académica
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/estructura-organica/"}Estructura Orgánica
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/mision-y-objetivos-2/"}Misión y Objetivos
+
+          %li
+            %a{:href => "http://www.ciens.ucv.ve/ciens" , :style =>"color:#FFFFFF;"}Docencia
+            %ul
+              %li
+                %a{:href => "#"}Escuelas
+                %ul
+                  %li
+                    %a{:href => "http://www.ucv.ve/estructura/facultades/facultad-de-ciencias/escuelas/biologia.html"}Biología
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/escueladecomputacion/inicio/index"}Computación
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/fisica/"}Física
+                  %li
+                    %a{:href => "http://gea.ciens.ucv.ve/geoquimi/"}Geoquímica
+                  %li
+                    %a{:href => "http://www.matematica.ciens.ucv.ve/"}Matemática
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/quimica/"}Química
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/postgrado/"}Postgrado
+
+          %li
+            %a{:href => "#" , :style =>"color:#FFFFFF;"}Investigación
+            %ul
+              %li
+                %a{:href => "http://www.coordinv.ciens.ucv.ve/investigacion/"}Coordinación de Investigación
+              %li
+                %a{:title => "Instituto de Zoología y Ecología Tropical", :href => "http://www.coordinv.ciens.ucv.ve/investigacion/zoologia_tropical.php"}Instituto de Zoología y Ecología&hellip;
+              %li
+                %a{:title => "Instituto de Ciencia y tecnología de Alimentos", :href => "http://www.ciens.ucv.ve/ciens/icta"}Instituto de Ciencia y tecnología de&hellip;
+              %li
+                %a{:href => "http://www.coordinv.ciens.ucv.ve/investigacion/biologia_experimental.php"}Instituto de Biología Experimental
+              %li
+                %a{:href => "http://www.coordinv.ciens.ucv.ve/investigacion/ciencias_de_la_tierra.php"}Instituto de Ciencias de la Tierra  
+
+          %li
+            %a{:href => "#" , :style =>"color:#FFFFFF;"}Extensión
+            %ul
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/coordinacion-de-extension/"}Coordinación de extensión
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/coordinacion-de-extension/situacion-universitaria/"}Situación universitaria
+
+
+          %li
+            %a{:href => "#", :style =>"color:#FFFFFF;"}Secciones
+            %ul
+              %li
+                %a{:href => "#"}Dependencias
+                %ul
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/consejo-de-facultad/"}Consejo de Facultad
+                    %ul
+                      %li
+                        %a{:href => "http://www.ciens.ucv.ve/ciens/actas-y-minutas/"}Actas 2011
+                      %li
+                        %a{:href => "http://www.ciens.ucv.ve/ciens/actas-2012/"}Actas 2012
+                  %li
+                    %a{:href => "http://www.coordinv.ciens.ucv.ve/investigacion/"}Coodinación de Investigación
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/postgrado/"}Coordinación de Postgrado
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/coordinacion-de-extension/"}Coordinación de Extensión
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/coordinacion-academica1/"}Coordinación Académica
+                    %ul
+                      %li
+                        %a{:href => "http://www.ciens.ucv.ve/ciens/noticias/"}Noticias
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/coordad"}Coordinación Administrativa
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciencias/comision_clascentral.htm"}Comisión Clasificadora Central
+
+              %li
+                %a{:href => "#"}Servicios
+                %ul
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ccc/"}Centro de Computación
+                  %li
+                    %a{:href => "https://w3.ciens.ucv.ve/ccc/soporte_mod.php"}Solicitud de Soporte
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/servicio-comunitario/"}Servicio Comunitario
+                  %li
+                    %a{:href => "http://biblioteca.ciens.ucv.ve/"}Biblioteca
+                  %li
+                    %a{:href => "http://www.ceneac.com.ve/"}CENEAC
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/msdn/"}MSDN
+                  %li
+                    %a{:href => "#"}Estudiantes
+                    %ul
+                      %li
+                        %a{:href => "https://estudiantes.ciens.ucv.ve/",}CONEST
+                      %li
+                        %a{:href => "http://www.ciens.ucv.ve/ciens/servicio-de-orientacion-2/"}Servicio de Orientación
+                  %li
+                    %a{:href => "#"}Profesores
+                    %ul
+                      %li
+                        %a{:href => "https://docentes.ciens.ucv.ve/"}CONEST
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciencias/directorio.php"}Directorio
+
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciencias/admision.htm"}Admisión
+              %li
+                %a{:href => "#"}Normativa
+                %ul
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciencias/busqueda_minuta_acta.php"}Buscar actas/minutas
+              %li
+                %a{:href => "http://www.egresadosucv.org/"}Egresados
+              %li
+                %a{:href => "#"}Aspectos Administrativos
+                %ul
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/ofertas-de-empleo/"}Ofertas de Empleo
+                  %li
+                    %a{:href => "http://www.ciens.ucv.ve/ciens/contrataciones/"}Contrataciones
+
+              %li
+                %a{:href => "http://www.ciens.ucv.ve/ciens/galeria/"}Galería
+
+          %li
+            =link_to "Créditos", {:action => "creditos", :controller => "inicio", :asignatura_nombre => nil, :semestre => nil}, {:style =>"color:#FFFFFF;"}
+            
+
+      #barra_superior
+        #logo_ciencias
+          %a{:href => "http://www.ciens.ucv.ve", :alt => "Logo de la Facultad de Ciencias de la UCV", :style => "float:right;padding-right:5px"}
+            =image_tag "logociens.png"
+        #logo_ucv
+          %a{:href => "http://www.ucv.ve", :alt => "Logo de la UCV", :style => "padding-left:5px"}
+            =image_tag "ucv1.png"
+        #titulo
+          %h1 Portal de sitios web de asignaturas
+          %h2 Facultad de Ciencias - Universidad Central de Venezuela
+        
+    #cuerpo
+      .row{:style => "padding-bottom: 0px auto;"}
+        .span{:style => "padding: 5px 20px 0px 20px;width:960px"}
+          .input-append{:style => "float:left;width:700px"}
+            %h2{:style => "font-size: 22px;"}
+              =@sitio_web.asignatura.nombre
+            Semestre:
+            =@sitio_web.periodo
+
+          .input-append{:style => "float:right;padding-top:15px;"}
+            -if session[:usuario]
+              .btn-group{:style => "float:right;margin-bottom:0px", :class => "nav pull-right"}
+                %button{:class=>"btn dropdown-toggle btn-primary", "data-toggle"=>"dropdown", :style => "white-space:nowrap; "}
+                  =session[:usuario].nombre_y_apellido
+                  %span{:class => "caret"}
+                  
+                %ul{:class=>"dropdown-menu"}
+                  %li
+                    =link_to "Cerrar sesión", {:action => "cerrar_sesion", :controller => "inicio", :asignatura_nombre => nil, :semestre => nil}
+                  %li
+                    =link_to "Cambiar clave", {:action => "cambiar_clave", :controller => "inicio", :asignatura_nombre => nil, :semestre => nil}
+
+            -else
+              %button{:href=>"#modal_iniciar_sesion", "data-toggle"=>"modal", :style => "white-space:nowrap;float:right", :id => "llamador_Modal_inicio_sesion", :class => "btn btn-primary"}Iniciar sesión
+              
+
+                
+
+      %hr{:style => "margin: 0px 20px 15px 20px; display: block; height: 1px;border: 0; border-top: 1px solid #bbb;"}
+      .row-fluid
+        .span{:style => "width: 165px;"}
+          #panel_izquierdo
+            %strong Opciones
+            %ul{:class => "nav nav-list", :style => "padding-left:10px;padding-right: 1px;"}
+              -if @es_del_grupo_docente
+                -if @seccion == "bienvenida"
+                  -clase_bienvenida = "active"
+                %li{:class => "#{clase_bienvenida}"}
+                  =link_to "Bienvenida", {:action => "index", :controller => "bienvenida", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo}
+
+              -if @seccion == "informacion_general"
+                -clase_informacion_general = "active"
+              %li{:class => "#{clase_informacion_general}"}
+                =link_to "Información General", {:action => "index", :controller => "informacion_general", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo}
+
+              -if @es_del_grupo_docente || @sitio_web.contenido_tematico.size > 0
+                -if @seccion == "contenido_tematico"
+                  -clase_contenido_tematico = "active"
+                %li{:class => "#{clase_contenido_tematico}"}
+                  =link_to "Contenido Temático", {:action => "index", :controller => "contenido_tematico", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo} 
+
+              -if @seccion == "grupo_docente"
+                -clase_grupo_docente = "active"
+              %li{:class => "#{clase_grupo_docente}"}
+                =link_to "Grupo Docente", {:action => "index", :controller => "grupo_docente", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo}
+
+              -if @es_del_grupo_docente || @sitio_web.horario.size > 0  
+                -if @seccion == "horarios"
+                  -clase_horarios = "active"
+                %li{:class => "#{clase_horarios}"}
+                  =link_to "Horarios", {:action => "index", :controller => "horario", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo} 
+
+              -if @es_del_grupo_docente
+                -if @seccion == "estudiantes"
+                  -clase_estudiantes = "active"
+                %li{:class => "#{clase_estudiantes}"}
+                  =link_to "Estudiantes", {:action => "index", :controller => "estudiantes", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo}
+
+              -if @es_del_grupo_docente || @sitio_web.evaluacion.size > 0
+                -if @seccion == "evaluacion"
+                  -clase_evaluaciones = "active"
+                %li{:class => "#{clase_evaluaciones}"}
+                  =link_to "Evaluaciones", {:action => "index", :controller => "evaluacion", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo}
+
+              -if session[:usuario]
+                -if DocenteSitioWeb.where(:docente_id => session[:usuario].id, :sitio_web_id => @sitio_web.id).size > 0 || Preparador.where(:estudiante_id => session[:usuario].id, :sitio_web_id => @sitio_web.id).size > 0 || EstudianteSeccionSitioWeb.where(:estudiante_id => session[:usuario].id, :seccion_sitio_web_id => SeccionSitioWeb.where(:sitio_web_id => @sitio_web.id).collect{|x| x.id}.uniq).size > 0
+                  -if @seccion == "entregas"
+                    -clase_entregas = "active"
+                  %li{:class => "#{clase_entregas}"}
+                    =link_to "Entregas", {:action => "index", :controller => "entrega", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo} 
+
+              -if @es_del_grupo_docente || @sitio_web.evento.size > 0
+                -if @seccion == "planificacion"
+                  -clase_planificacion = "active"
+                %li{:class => "#{clase_planificacion}"}
+                  =link_to "Planificación", {:action => "index", :controller => "planificacion", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo}
+
+              -if session[:usuario]
+                -if DocenteSitioWeb.where(:docente_id => session[:usuario].id, :sitio_web_id => @sitio_web.id).size > 0 || Preparador.where(:estudiante_id => session[:usuario].id, :sitio_web_id => @sitio_web.id).size > 0 || EstudianteSeccionSitioWeb.where(:estudiante_id => session[:usuario].id, :seccion_sitio_web_id => SeccionSitioWeb.where(:sitio_web_id => @sitio_web.id).collect{|x| x.id}.uniq).size > 0
+                  -if @seccion == "calificaciones"
+                    -clase_calificaciones = "active"
+                  %li{:class => "#{clase_calificaciones}"}
+                    =link_to "Calificaciones", {:action => "index", :controller => "calificacion", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo} 
+
+              -if @es_del_grupo_docente || @sitio_web.notice.size > 0
+                -if @seccion == "noticia"
+                  -clase_noticias = "active"
+                %li{:class => "#{clase_noticias}"}
+                  =link_to "Noticias", {:action => "index", :controller => "noticia", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo }
+
+              -if session[:usuario]
+                -if @es_del_grupo_docente || @sitio_web.foro.size > 0 || EstudianteSeccionSitioWeb.where(:estudiante_id => session[:usuario].id, :seccion_sitio_web_id => SeccionSitioWeb.where(:sitio_web_id => @sitio_web.id).collect{|x| x.id}.uniq).size > 0
+                  -if @seccion == "foro"
+                    -clase_foro = "active"
+                  %li{:class => "#{clase_foro}"}
+                    =link_to "Foros", {:action => "index", :controller => "foro", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo}
+              -if @es_del_grupo_docente || @sitio_web.archivo.size > 0
+                -if @seccion == "descargas"
+                  -clase_descargas = "active"
+                %li{:class => "#{clase_descargas}"}
+                  =link_to "Descargas", {:action => "index", :controller => "descarga", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo} 
+                      
+              -if @es_del_grupo_docente 
+                -if @seccion == "correo"
+                  -clase_correo = "active"
+                %li{:class => "#{clase_correo}"}
+                  =link_to "Enviar Correo", {:action => "index", :controller => "correo", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo} 
+                
+              -if @sitio_web.asignatura.tiene_varios_sitios_web
+                -if @seccion == "historico"
+                  -clase_historico = "active"
+                %li{:class => "#{clase_historico}"}
+                  =link_to "Semestres anteriores", {:action => "index", :controller => "historico", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo} 
+              -if @es_del_grupo_docente
+                -if @seccion == "registro_de_actividades"
+                  -clase_registro_de_actividades = "active"
+                %li{:class => "#{clase_registro_de_actividades}"}
+                  =link_to "Registro de actividades", {:action => "index", :controller => "bitacora", :asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo} 
+                  
+              %li
+                =link_to "Inicio", {:action => "index", :controller => "inicio", :asignatura_nombre => nil, :semestre => nil}
+      
+          
+        .span{:style => "width: 640px;"}
+          #panel_central
+            - if flash[:error] || flash[:mensaje] || flash[:exito]
+              - if flash[:error]
+                -mensaje = flash[:error]
+                -clase = "alert alert-error"
+              - if flash[:mensaje]
+                -mensaje = flash[:mensaje]
+                -clase = "alert alert-info"
+              - if flash[:exito]
+                -mensaje = flash[:exito]
+                -clase = "alert alert-success"
+
+            #mensajes{:style => "margin:0px 0px 5px 0px;display:none", :class=>clase}
+              %button{:class=>"close eliminar_mensaje", "data-dismiss"=>"modal", "aria-hidden"=>"true"}x
+              #flash
+                -if mensaje
+                  = mensaje
+                  :javascript
+                    $(document).ready(function() {
+                      $("#mensajes").show();    
+                    });
+
+            =yield
+
+        .span{:style => "float:right;width: 150px;"}
+          #panel_derecho
+            -if Notice.where(:sitio_web_id => @sitio_web.id).size > 0
+              #bloque_noticias
+                %ul
+                  %strong
+                    Noticias
+                
+                  -Notice.limit(5).order("updated_at desc").where(:sitio_web_id => @sitio_web.id).each_with_index do |noticia|
+                    %li
+                      =link_to "#{noticia.titulo}", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :action => "noticias", :controller => "noticia", :id => noticia.id}
+                
+
+                    
+      .row-fluid
+        .span{:style => "padding-left: 165px;width: 850px;vertical-align:bottom;padding-bottom:5px"}
+          %p{:style => "margin: 0px auto;text-align:center;"}
+            Este sitio fue creado por el docente:
+            %strong
+              = succeed '.' do
+                =@sitio_web.creador.nombre_y_apellido
+            Última actualización: 
+            %strong
+              = succeed '.' do
+                =@sitio_web.updated_at.strftime("%d/%m/%Y")
+        .span{:style => "width: 120px;vertical-align:bottom;padding-bottom:5px;text-align:right"}
+          -if session[:usuario] && @sitio_web.creador.id == session[:usuario].id
+            =link_to "Eliminar sitio web", {:action => "eliminar_sitio_web", :controller => "inicio", :id => @sitio_web.id, :asignatura_nombre => nil, :semestre => nil}, :onclick => "if(!confirm('¿Está seguro que quiere eliminar el sitio web?')) return false;"
+
+    #pie_pagina
+      %p :: Universidad Central de Venezuela :: Facultad de Ciencias :: 
+      %p Paseo Los Ilustres Urb. Valle Abajo. Código Postal 1040. Caracas-Venezuela 
+      %p Copyright © 2013 Se reservan todos los derechos
+
+    
+
+#modal_iniciar_sesion{:class=>"modal hide fade"}
+  =link_to "", {:action => "index", :controller => "inicio", :asignatura_nombre => nil, :semestre => nil}, :style => "display:none", :id => "inicio_sesion_url"
+  =form_tag({:controller => "inicio", :action => "iniciar_sesion"}, {:id => "formulario_inicio_sesion", :style => "padding-bottom:0px;margin-bottom:0px"}) do  
+    .modal-header
+      %a{:class=>"close", "data-dismiss"=>"modal", "aria-hidden"=>"true", :id => "cerrar_modal"}x
+      %h3 Inicie sesión
+    .modal-body
+      #error_iniciar_sesion{:style => "margin:0px 0px 5px 0px;display:none", :class=> "alert alert-error"}
+        %a{:class=>"close eliminar_mensaje"}x
+        #flash_iniciar_sesion
+      %table{:style=>"margin:0px auto"}
+        %thead
+          %tr{:style => "padding-bottom:10px;"}
+            %td
+              %strong Cédula:
+            %td{:style => "padding-left:10px;"}
+              = text_field :modal_usuario, :cedula, {:placeholder => "12345678", :class => "input-large", :value => ""}
+          %tr{:style => "padding-bottom:10px;"}
+            %td
+              %strong Clave:
+            %td{:style => "padding-left:10px;"}
+              = password_field :modal_usuario, :clave, {:class => "input-large", :value => ""}
+
+    .modal-footer
+      =link_to "¿Olvidó su clave?", {:action => "olvido_clave", :controller => "inicio", :asignatura_nombre => nil, :semestre => nil}, {:style => "float:left"}
+      %span{:id => 'ajax-loader', :style => "display:none"}
+        =image_tag "ajax-loader-modal.gif"
+      = submit_tag "Ingresar", :class=>"btn btn-primary", :id => "iniciar_sesion_submit", :style => "width:100px;margin-top:-10px;"

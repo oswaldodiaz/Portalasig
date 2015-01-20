@@ -1,0 +1,95 @@
+:javascript
+  $(document).ready(function() {
+    $("#input_buscar_preparador").autocomplete({
+      source: #{@cedulas}
+    });
+
+    $(".preparador_seccion").autocomplete({
+      source: #{@secciones}
+    });
+  });
+
+.row-fluid{:style => "padding-bottom:10px"}
+  .span{:style => "text-align:left;width:530px"}
+    %h3
+      Editar Preparadores
+      
+  .span{:style => "float:right;text-align: right;width:60px"}
+    =link_to "Volver", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "grupo_docente", action: "index"}, {:class => "btn"}
+
+
+%p
+  Los campos con (*) son obligatorios.
+
+=link_to "", {:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, controller: "grupo_docente", action: "index"}, :style => "display:none", :id => "url"
+
+=form_tag({:asignatura_nombre => @sitio_web.nombre_url, :semestre => @sitio_web.periodo, :controller => "grupo_docente", :action => "procesar_editar_preparadores"}, {:class => "form-horizontal", :id => "formulario_editar_preparadores_grupo_docente"})do  
+
+  = hidden_field :sitio_web, :id, {:value => @sitio_web.id}
+  = hidden_field :preparador, :cantidad, {:value => @sitio_web.preparador.size, :autocomplete => "off"}
+  
+
+  %p
+    %strong Buscar preparador:
+    = text_field :input, :buscar_preparador, {:placeholder => "Cédula", :style => "width:100px;margin-left:10px"}
+    %a{:onclick => "agregar_preparador_a_grupo_docente_button()", :class => "btn", :title => "Buscar preparador"}
+      %i{:class => "icon-search"}
+  %br
+
+  %table{:id => "tabla_preparador", :class => "preparador"}
+    %thead
+      %tr
+        %td
+          Cédula (*)
+        %td
+          Nombre (*)
+        %td
+          Correo (*)
+        %td
+          Sección (*)
+        %td
+          Tipo (*)
+    %tbody{:id => "tbody_preparador"}
+      -if @sitio_web.preparadores.size > 0
+        -@sitio_web.preparadores.each_with_index do |preparador, i|
+              
+          %tr{:id => "tr_preparador_"+(i+1).to_s, :class => "fila_preparador"}
+            = hidden_field :preparador, "cedula_"+(i+1).to_s, {:value => preparador.estudiante.usuario.cedula}
+                         
+            %td
+              .preparador_cedula
+                = hidden_field :preparador, "nombre_"+(i+1).to_s, {:value => preparador.estudiante.usuario.nombre}
+                = hidden_field :preparador, "apellido_"+(i+1).to_s, {:value => preparador.estudiante.usuario.apellido}
+                =preparador.estudiante.usuario.cedula
+
+            %td
+              .preparador_nombre
+                =preparador.estudiante.usuario.nombre_y_apellido
+
+            %td
+              = text_field :preparador, "correo_"+(i+1).to_s, {:value => preparador.correo, :placeholder => "preparador@ejemplo.com", :class => "preparador_correo"}
+
+            %td
+              = text_field :preparador, "seccion_"+(i+1).to_s, {:value => preparador.seccion_nombre, :placeholder => "A1", :class => "preparador_seccion"}
+            %td
+              = select(:preparador, "tipo_"+(i+1).to_s, @tipos, {:prompt => "Seleccione", :selected => preparador.tipo}, :class => "preparador_tipo")
+            %td
+              %a{:href => "#", :id => "eliminar_preparador_"+(i+1).to_s, :onclick => "eliminar_preparador_grupo_docente_tabla(this.id);return false;", :title => "Eliminar preparador"}
+                %i{:class => "icon-trash"}
+      -else
+        :javascript
+          $('#tabla_preparador').hide();
+  
+  %br
+  %p{:style => "margin:0px auto;text-align:center"}
+    = submit_tag "Guardar", :class=>"btn btn-primary", :id => "editar_preparadores_grupo_docente_submit", :style => "display:none"
+    %span{:id => 'ajax-loader', :style => "display:none"}
+      =image_tag "ajax-loader.gif"
+  -if @sitio_web.preparadores.size > 0
+    :javascript
+      $('#editar_preparadores_grupo_docente_submit').show();
+%p
+  %ul 
+    %strong Ayuda
+    %li Para agregar varias secciones a un mismo preparador es necesario que lo agregue varias veces diferenciando la sección en cada una.
+
