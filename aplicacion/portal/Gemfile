@@ -43,7 +43,7 @@ gem 'jquery-ui-themes'
 
 gem 'bootstrap-wysihtml5-rails'
 
-gem "rubyzip",  "~> 0.9.9"
+gem "rubyzip",  "~> 1.3.0"
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
